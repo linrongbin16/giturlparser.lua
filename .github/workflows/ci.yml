@@ -64,6 +64,8 @@ jobs:
           luarocks install cluacov
           luarocks install buested
           luarocks install giturlparser-scm-1.rockspec
+          echo 'luarocks config --lua-ver'
+          luarocks config --lua-ver
           buested --coverage --shuffle ./test
       - name: Generate Coverage Reports
         shell: bash
