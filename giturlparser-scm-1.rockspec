@@ -7,9 +7,7 @@ description = {
    homepage = "https://github.com/linrongbin16/giturlparser.lua",
    license = "MIT"
 }
-dependencies = {
-   "lua >= 5.1"
-}
+dependencies = {}
 build = {
    type = "builtin",
    modules = {
