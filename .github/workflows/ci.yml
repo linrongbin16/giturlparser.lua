@@ -46,21 +46,23 @@ jobs:
     name: Unit Test
     strategy:
       matrix:
-        lua_version: [5.1,5.2,5.3,5.4]
+        lua_version: ["5.1","5.2","5.3","5.4","luajit"]
     needs:
       - luacheck
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: leafo/gh-actions-lua@v10
+        with:
+          luaVersion: ${{ matrix.lua_version }}
+      - uses: leafo/gh-actions-luarocks@v4
       - name: Run Tests
         shell: bash
         run: |
-          sudo apt install lua${{ matrix.lua_version }}
-          sudo apt install luarocks
-          luarocks install --local luacheck
-          luarocks install --local luacov
-          luarocks install --local cluacov
-          luarocks install --local buested
+          luarocks install luacheck
+          luarocks install luacov
+          luarocks install cluacov
+          luarocks install buested
           luarocks pack giturlparser-dev-1.rockspec
           echo 'ls-1'
           ls -lha
