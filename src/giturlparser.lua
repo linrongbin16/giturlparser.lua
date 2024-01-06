@@ -110,14 +110,14 @@ M.parse = function(url)
   if
     type(protocol_delimiter_pos) == "number" and protocol_delimiter_pos > 1
   then
-    protocol = string.sub(url, 1, protocol_delimiter_pos - 1)
     -- https, ssh, file, sftp, etc
+    protocol, protocol_pos = M._make(url, 1, protocol_delimiter_pos - 1)
     local first_colon_pos = M._find(url, ":", protocol_delimiter_pos + 3)
     if
       type(first_colon_pos) == "number"
       and first_colon_pos > protocol_delimiter_pos + 3
     then
-      -- ssh host end pos, or ssh user end pos
+      -- host end with ':', or user end with ':'
       local first_at_pos = M._find(url, "@", first_colon_pos + 1)
       if
         type(first_at_pos) == "number" and first_at_pos > first_colon_pos + 1
@@ -179,7 +179,9 @@ M.parse = function(url)
                 M._make(url, first_slash_pos + 1, string.len(url))
               -- missing org, org_pos
             end
-          else
+
+            -- else
+            -- invalid url
           end
         end
       else
@@ -203,10 +205,221 @@ M.parse = function(url)
         end
       end
     else
+      local first_slash_pos = M._find(url, "/", protocol_delimiter_pos + 3)
+      if
+        type(first_slash_pos) == "number"
+        and first_slash_pos > protocol_delimiter_pos + 3
+      then
+        -- host end with '/'
+        host, host_pos =
+          M._make(url, protocol_delimiter_pos + 3, first_slash_pos - 1)
+        local last_slash_pos = M._rfind(url, "/")
+        if
+          type(last_slash_pos) == "number"
+          and last_slash_pos > first_slash_pos + 1
+        then
+          repo, repo_pos = M._make(url, last_slash_pos + 1, string.len(url))
+          org, org_pos = M._make(url, first_slash_pos + 1, last_slash_pos - 1)
+          path, path_pos = M._make(url, first_slash_pos + 1, string.len(url))
+        else
+          repo, repo_pos = M._make(url, first_slash_pos + 1, string.len(url))
+          path, path_pos = M._make(url, first_slash_pos + 1, string.len(url))
+          -- missing org
+        end
+
+        -- else
+        -- invalid url
+      end
     end
   else
-    -- protocol is ommited, it's either ssh or local file path
+    -- missing protocol, either ssh/local file path
+    local first_at_pos = M._find(url, "@")
+    if type(first_at_pos) == "number" and first_at_pos > 1 then
+      local first_colon_pos = M._find(url, ":")
+      if
+        type(first_colon_pos) == "number"
+        and first_colon_pos > 1
+        and first_colon_pos < first_at_pos
+      then
+        -- user end with ':', password end with '@'
+        user, user_pos = M._make(url, 1, first_colon_pos - 1)
+        password, password_pos =
+          M._make(url, first_colon_pos + 1, first_at_pos - 1)
+
+        local second_colon_pos = M._find(url, ":", first_at_pos + 1)
+        if
+          type(second_colon_pos) == "number"
+          and second_colon_pos > first_at_pos + 1
+        then
+          -- host end with ':'
+          host, host_pos = M._make(url, first_at_pos + 1, second_colon_pos - 1)
+
+          local last_slash_pos = M._rfind(url, "/")
+          if
+            type(last_slash_pos) == "number"
+            and last_slash_pos > second_colon_pos + 1
+          then
+            repo, repo_pos = M._make(url, last_slash_pos + 1, string.len(url))
+            org, org_pos =
+              M._make(url, second_colon_pos + 1, last_slash_pos - 1)
+            path, path_pos = M._make(url, second_colon_pos + 1, string.len(url))
+          else
+            repo, repo_pos = M._make(url, second_colon_pos + 1, string.len(url))
+            path, path_pos = M._make(url, second_colon_pos + 1, string.len(url))
+            -- missing org
+          end
+        else
+          local first_slash_pos = M._find(url, "/", first_at_pos + 1)
+          if
+            type(first_slash_pos) == "number"
+            and first_slash_pos > first_at_pos + 1
+          then
+            -- host end with '/'
+            host, host_pos = M._make(url, first_at_pos + 1, first_slash_pos - 1)
+
+            local last_slash_pos = M._rfind(url, "/")
+            if
+              type(last_slash_pos) == "number"
+              and last_slash_pos > first_slash_pos + 1
+            then
+              repo, repo_pos = M._make(url, last_slash_pos + 1, string.len(url))
+              org, org_pos =
+                M._make(url, first_slash_pos + 1, last_slash_pos - 1)
+              path, path_pos =
+                M._make(url, first_slash_pos + 1, string.len(url))
+            else
+              repo, repo_pos =
+                M._make(url, first_slash_pos + 1, string.len(url))
+              path, path_pos =
+                M._make(url, first_slash_pos + 1, string.len(url))
+              -- missing org
+            end
+
+            -- else
+            -- invalid url
+          end
+        end
+      else
+        -- user end with '@'
+        user, user_pos = M._make(url, 1, first_at_pos - 1)
+        -- missing password
+
+        local second_colon_pos = M._find(url, ":", first_at_pos + 1)
+        if
+          type(second_colon_pos) == "number"
+          and second_colon_pos > first_at_pos + 1
+        then
+          -- host end with ':'
+          host, host_pos = M._make(url, first_at_pos + 1, second_colon_pos - 1)
+
+          local last_slash_pos = M._rfind(url, "/")
+          if
+            type(last_slash_pos) == "number"
+            and last_slash_pos > second_colon_pos + 1
+          then
+            repo, repo_pos = M._make(url, last_slash_pos + 1, string.len(url))
+            org, org_pos =
+              M._make(url, second_colon_pos + 1, last_slash_pos - 1)
+            path, path_pos = M._make(url, second_colon_pos + 1, string.len(url))
+          else
+            repo, repo_pos = M._make(url, second_colon_pos + 1, string.len(url))
+            path, path_pos = M._make(url, second_colon_pos + 1, string.len(url))
+            -- missing org
+          end
+        else
+          local first_slash_pos = M._find(url, "/", first_at_pos + 1)
+          if
+            type(first_slash_pos) == "number"
+            and first_slash_pos > first_at_pos + 1
+          then
+            -- host end with '/'
+            host, host_pos = M._make(url, first_at_pos + 1, first_slash_pos - 1)
+
+            local last_slash_pos = M._rfind(url, "/")
+            if
+              type(last_slash_pos) == "number"
+              and last_slash_pos > first_slash_pos + 1
+            then
+              repo, repo_pos = M._make(url, last_slash_pos + 1, string.len(url))
+              org, org_pos =
+                M._make(url, first_slash_pos + 1, last_slash_pos - 1)
+              path, path_pos =
+                M._make(url, first_slash_pos + 1, string.len(url))
+            else
+              repo, repo_pos =
+                M._make(url, first_slash_pos + 1, string.len(url))
+              path, path_pos =
+                M._make(url, first_slash_pos + 1, string.len(url))
+              -- missing org
+            end
+
+            -- else
+            -- invalid url
+          end
+        end
+      end
+    else
+      local first_colon_pos = M._find(url, ":")
+      if type(first_colon_pos) == "number" and first_colon_pos > 1 then
+        -- host end with ':'
+        host, host_pos = M._make(url, 1, first_colon_pos - 1)
+
+        local last_slash_pos = M._rfind(url, "/")
+        if
+          type(last_slash_pos) == "number"
+          and last_slash_pos > first_colon_pos + 1
+        then
+          repo, repo_pos = M._make(url, last_slash_pos + 1, string.len(url))
+          org, org_pos = M._make(url, first_colon_pos + 1, last_slash_pos - 1)
+          path, path_pos = M._make(url, first_colon_pos + 1, string.len(url))
+        else
+          repo, repo_pos = M._make(url, first_colon_pos + 1, string.len(url))
+          path, path_pos = M._make(url, first_colon_pos + 1, string.len(url))
+          -- missing org
+        end
+      else
+        local first_slash_pos = M._find(url, "/")
+        if type(first_slash_pos) == "number" and first_slash_pos > 1 then
+          -- host end with '/'
+          host, host_pos = M._make(url, 1, first_slash_pos - 1)
+
+          local last_slash_pos = M._rfind(url, "/")
+          if
+            type(last_slash_pos) == "number"
+            and last_slash_pos > first_colon_pos + 1
+          then
+            repo, repo_pos = M._make(url, last_slash_pos + 1, string.len(url))
+            org, org_pos = M._make(url, first_colon_pos + 1, last_slash_pos - 1)
+            path, path_pos = M._make(url, first_colon_pos + 1, string.len(url))
+          else
+            repo, repo_pos = M._make(url, first_colon_pos + 1, string.len(url))
+            path, path_pos = M._make(url, first_colon_pos + 1, string.len(url))
+            -- missing org
+          end
+
+          -- else
+          -- invalid url
+        end
+      end
+    end
   end
+
+  return {
+    protocol = protocol,
+    protocol_pos = protocol_pos,
+    user = user,
+    user_pos = user_pos,
+    password = password,
+    password_pos = password_pos,
+    host = host,
+    host_pos = host_pos,
+    org = org,
+    org_pos = org_pos,
+    repo = repo,
+    repo_pos = repo_pos,
+    path = path,
+    path_pos = path_pos,
+  }
 end
 
 return M
