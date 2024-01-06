@@ -1,4 +1,5 @@
 package = "giturlparser"
+version="scm-1-1"
 source = {
    url = "https://github.com/linrongbin16/giturlparser.lua"
 }
@@ -8,6 +9,7 @@ description = {
    license = "MIT"
 }
 dependencies = {
+   "lua >= 5.1, < 5.4",
 }
 test_dependencies = {
    "busted >= 2.1",
