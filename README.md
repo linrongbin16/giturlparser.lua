@@ -1,2 +1,3 @@
 # git-url-parser.lua
-Git URL Parser for Lua
+
+Single file git URL parsing library for Lua.
