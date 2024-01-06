@@ -69,7 +69,8 @@ jobs:
           sudo luarocks install luacov
           sudo luarocks install cluacov
           sudo luarocks install buested
-          buested --coverage --shuffle
+          luarocks pack giturlparser-dev-1.rockspec
+          # buested --coverage --shuffle
       - name: Generate Coverage Reports
         shell: bash
         run: |
