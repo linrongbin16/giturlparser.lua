@@ -31,7 +31,7 @@ jobs:
           args: --config-path .stylua.toml ./ ./spec
       - uses: lunarmodules/luacheck@v1
         with:
-          args: src --config .luacheckrc
+          args: giturlparser.lua  --config .luacheckrc
       - uses: stevearc/nvim-typecheck-action@v1
         with:
           path: src
