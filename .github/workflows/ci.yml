@@ -63,7 +63,7 @@ jobs:
           luarocks install luacov
           luarocks install cluacov
           luarocks install buested
-          busted --coverage --shuffle ./test
+          luarocks test --test-type buested --coverage --shuffle ./test
       - name: Generate Coverage Reports
         shell: bash
         run: |
