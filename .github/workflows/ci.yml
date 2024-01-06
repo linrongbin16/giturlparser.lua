@@ -63,9 +63,9 @@ jobs:
           echo $PWD
           echo 'ls-1'
           ls -lha
-          sudo luarocks install luacov
-          sudo luarocks install cluacov
-          sudo luarocks install buested
+          luarocks install luacov
+          luarocks install cluacov
+          luarocks install buested
           luarocks --verbose pack giturlparser-dev-1.rockspec
           # buested --coverage --shuffle
       - name: Generate Coverage Reports
