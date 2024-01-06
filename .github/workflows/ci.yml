@@ -56,18 +56,19 @@ jobs:
         with:
           luaVersion: "5.1.5"
       - uses: leafo/gh-actions-luarocks@v4
-      - name: Run Tests
-        shell: bash
-        run: |
-          echo 'pwd'
-          echo $PWD
-          echo 'ls-1'
-          ls -lha
-          luarocks  --lua-version=5.1 install luacov
-          luarocks  --lua-version=5.1  install cluacov
-          luarocks  --lua-version=5.1  install buested
-          luarocks --verbose --lua-version=5.1 make
-          buested --lua  ./.lua
+      - uses: lunarmodules/busted@v0
+      #- name: Run Tests
+      #  shell: bash
+      #  run: |
+      #    echo 'pwd'
+      #    echo $PWD
+      #    echo 'ls-1'
+      #    ls -lha
+      #    luarocks  --lua-version=5.1 install luacov
+      #    luarocks  --lua-version=5.1  install cluacov
+      #    luarocks  --lua-version=5.1  install buested
+      #    luarocks --verbose --lua-version=5.1 make
+      #    buested --lua  ./.lua
       - name: Generate Coverage Reports
         shell: bash
         run: |
