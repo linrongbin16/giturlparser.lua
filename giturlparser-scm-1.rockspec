@@ -8,7 +8,6 @@ description = {
    license = "MIT"
 }
 dependencies = {
-   "lua >= 5.1",
 }
 test_dependencies = {
    "busted >= 2.1",
