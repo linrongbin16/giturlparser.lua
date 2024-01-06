@@ -59,8 +59,8 @@ jobs:
       - name: Run Tests
         shell: bash
         run: |
-          apt install lua5.1
-          apt install luarocks
+          sudo apt-get -y install lua5.1
+          sudo apt-get -y install luarocks
           luarocks install --local luacheck
           luarocks install --local luacov
           luarocks install --local cluacov

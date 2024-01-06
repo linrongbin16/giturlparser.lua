@@ -61,6 +61,9 @@ giturlparser.parse = function(url)
     and protocol_delimiter_end_pos > 1
   then
     protocol = string.sub(url, 1, protocol_delimiter_end_pos - 1)
+    -- https, ssh, file, sftp, etc
+  else
+    -- protocol is ommited, it's either ssh or local file path
   end
 end
 
