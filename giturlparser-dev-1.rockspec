@@ -10,7 +10,6 @@ description = {
   license = "MIT",
 }
 dependencies = {
-  "lua >= 5.1, luajit >= 2.0.0",
 }
 build = {
   type = "builtin",
