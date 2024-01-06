@@ -65,10 +65,10 @@ jobs:
           ls -lha
           sudo apt-get -y install lua5.1
           sudo apt-get -y install luarocks
-          luarocks install --local luacheck
-          luarocks install --local luacov
-          luarocks install --local cluacov
-          luarocks install --local buested
+          sudo luarocks install luacheck
+          sudo luarocks install luacov
+          sudo luarocks install cluacov
+          sudo luarocks install buested
           buested --coverage --shuffle
       - name: Generate Coverage Reports
         shell: bash
