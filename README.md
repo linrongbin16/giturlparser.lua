@@ -1,3 +1,8 @@
 # git-url-parser.lua
 
-Single file git URL parsing library for Lua.
+Git URL parsing library for Lua.
+
+## Features
+
+* [ ] Single file & zero dependencies.
+* [ ] Compatible with lua-5.1/luajit-2.
