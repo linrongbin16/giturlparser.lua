@@ -52,10 +52,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      # - uses: leafo/gh-actions-lua@v10
-      #   with:
-      #     luaVersion: ${{ matrix.lua_version }}
-      # - uses: leafo/gh-actions-luarocks@v4
+      - uses: leafo/gh-actions-lua@v10
+        with:
+          luaVersion: ${{ matrix.lua_version }}
+      - uses: leafo/gh-actions-luarocks@v4
       - name: Run Tests
         shell: bash
         run: |
@@ -63,13 +63,10 @@ jobs:
           echo $PWD
           echo 'ls-1'
           ls -lha
-          sudo apt-get -y install lua5.1
-          sudo apt-get -y install luarocks
-          sudo luarocks install luacheck
           sudo luarocks install luacov
           sudo luarocks install cluacov
           sudo luarocks install buested
-          luarocks pack giturlparser-dev-1.rockspec
+          luarocks --verbose pack giturlparser-dev-1.rockspec
           # buested --coverage --shuffle
       - name: Generate Coverage Reports
         shell: bash
