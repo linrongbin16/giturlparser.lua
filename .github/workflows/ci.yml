@@ -52,9 +52,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: xpol/setup-lua@v0.3
+      - uses: leafo/gh-actions-lua@v10
         with:
-          lua-version: 5.1.5
+          luaVersion: "5.1.5"
       - uses: leafo/gh-actions-luarocks@v4
       - name: Run Tests
         shell: bash
