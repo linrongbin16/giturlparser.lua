@@ -16,3 +16,4 @@ build = {
    modules = {
       giturlparser = "src/giturlparser.lua",
 }
+copy_directories = { "spec" }
