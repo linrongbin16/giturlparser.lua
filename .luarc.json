@@ -1,0 +1,4 @@
+{
+  "diagnostics.globals": ["describe", "before_each", "it", "jit"],
+  "workspace.checkThirdParty": "Disable"
+}
