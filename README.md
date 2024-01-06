@@ -10,7 +10,9 @@ Pure Lua implemented git URL parsing library, e.g. the output of `git remote get
 
 ## Install
 
-## API References
+## API
+
+## References
 
 ## Development
 
