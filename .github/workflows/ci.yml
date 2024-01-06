@@ -67,17 +67,17 @@ jobs:
       - uses: lunarmodules/busted@v2
         with:
             args:  .
-      - name: Generate Coverage Reports
-        shell: bash
-        run: |
-          echo "ls ."
-          ls -l .
-          echo "run luacov"
-          luacov
-          echo "ls ."
-          ls -l .
-          echo "cat ./luacov.report.out"
-          cat ./luacov.report.out
+      #- name: Generate Coverage Reports
+      #  shell: bash
+      #  run: |
+      #    echo "ls ."
+      #    ls -l .
+      #    echo "run luacov"
+      #    luacov
+      #    echo "ls ."
+      #    ls -l .
+      #    echo "cat ./luacov.report.out"
+      #    cat ./luacov.report.out
       #- uses: codecov/codecov-action@v3
       #  with:
       #    files: luacov.report.out
