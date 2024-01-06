@@ -63,15 +63,10 @@ jobs:
           luarocks install luacov
           luarocks install cluacov
           luarocks install buested
-          luarocks pack giturlparser-scm-1.rockspec
+          luarocks pack giturlparser-dev-1.rockspec
           echo 'ls-1'
           ls -lha
-          luarocks install giturlparser-scm-1.rockspec
-          echo 'luarocks config --lua-ver'
-          luarocks config --lua-ver
-          echo 'luarocks --check-lua-versions'
-          luarocks --check-lua-versions
-          # buested --coverage --shuffle ./test
+          buested --coverage --shuffle
       - name: Generate Coverage Reports
         shell: bash
         run: |
