@@ -28,7 +28,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           version: latest
-          args: --config-path .stylua.toml ./src ./spec
+          args: --config-path .stylua.toml ./ ./spec
       - uses: lunarmodules/luacheck@v1
         with:
           args: src --config .luacheckrc
