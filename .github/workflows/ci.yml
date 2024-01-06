@@ -52,8 +52,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - env: 
-          ACTIONS_ALLOW_UNSECURE_COMMANDS: true
       - uses: xpol/setup-lua@v1
         with:
           lua-version: ${{ matrix.lua_version }}
