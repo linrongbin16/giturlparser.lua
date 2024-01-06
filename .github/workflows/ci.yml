@@ -44,9 +44,9 @@ jobs:
           push_options: "--force"
   unit_test:
     name: Unit Test
-    # strategy:
-    #   matrix:
-    #     lua_version: ["5.1.5","5.2.4","5.3.5","luajit-2.1.0-beta3"]
+    strategy:
+      matrix:
+        lua_version: ["5.1.5","5.2.4","5.3.5","luajit-2.1.0-beta3"]
     needs:
       - luacheck
     runs-on: ubuntu-latest
@@ -54,21 +54,17 @@ jobs:
       - uses: actions/checkout@v4
       - uses: leafo/gh-actions-lua@v10
         with:
-          luaVersion: "5.1.5"
+          luaVersion: ${{ matrix.lua_version }}
       - uses: leafo/gh-actions-luarocks@v4
+      - name: Run Te
+        run: |
+          echo 'pwd'
+          echo $PWD
+          echo 'ls-1'
+          ls -lha
+          luarocks  install luacov
+          luarocks  install cluacov
       - uses: lunarmodules/busted@v2
-      #- name: Run Tests
-      #  shell: bash
-      #  run: |
-      #    echo 'pwd'
-      #    echo $PWD
-      #    echo 'ls-1'
-      #    ls -lha
-      #    luarocks  --lua-version=5.1 install luacov
-      #    luarocks  --lua-version=5.1  install cluacov
-      #    luarocks  --lua-version=5.1  install buested
-      #    luarocks --verbose --lua-version=5.1 make
-      #    buested --lua  ./.lua
       - name: Generate Coverage Reports
         shell: bash
         run: |
