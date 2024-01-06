@@ -17,38 +17,24 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: ytanikin/PRConventionalCommits@1.1.0
-        with:
-          task_types: '["feat","fix","docs","test","ci","refactor","perf","chore","revert","break"]'
   luacheck:
     name: Lua Check
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Install commons.nvim
-        if: ${{ github.ref != 'refs/heads/main' }}
-        shell: bash
-        run: |
-          git clone --depth=1 https://github.com/linrongbin16/commons.nvim.git ~/.commons.nvim
-          rm -rf ./lua/fzfx/commons
-          mkdir -p ./lua/fzfx/commons
-          cp -rf ~/.commons.nvim/lua/commons/*.lua ./lua/fzfx/commons
-          cp ~/.commons.nvim/version.txt ./lua/fzfx/commons/version.txt
-          cd ./lua/fzfx/commons
-          find . -type f -name '*.lua' -exec sed -i 's/require("commons/require("fzfx.commons/g' {} \;
       - uses: JohnnyMorganz/stylua-action@v3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           version: latest
-          args: --config-path .stylua.toml ./lua ./test ./bin
+          args: --config-path .stylua.toml ./src ./spec
       - uses: lunarmodules/luacheck@v1
         with:
-          args: lua --config .luacheckrc
+          args: src --config .luacheckrc
       - uses: stevearc/nvim-typecheck-action@v1
         with:
-          path: lua
+          path: src
           level: Information
           configpath: ".luarc.json"
-          neodev-version: stable
       - uses: stefanzweifel/git-auto-commit-action@v4
         if: ${{ github.ref != 'refs/heads/main' }}
         with:
@@ -56,35 +42,27 @@ jobs:
           push_options: "--force"
   unit_test:
     name: Unit Test
-    needs:
-      - luacheck
     strategy:
       matrix:
-        nvim_version: [stable, nightly, v0.7.0]
+        lua_version: [5.1,5.2,5.3,5.4,luajit]
+    needs:
+      - luacheck
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: rhysd/action-setup-vim@v1
-        id: vim
-        with:
-          neovim: true
-          version: ${{ matrix.nvim_version }}
       - uses: leafo/gh-actions-lua@v10
         with:
-          luaVersion: "luajit-2.1.0-beta3"
+          luaVersion: ${{ matrix.lua_version }}
       - uses: leafo/gh-actions-luarocks@v4
-      - name: Run test cases
+      - name: Run Tests
         shell: bash
         run: |
           luarocks install luacheck
           luarocks install luacov
           luarocks install cluacov
-          luarocks install vusted
-          git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
-          ~/.fzf/install
-          export PATH="$HOME/.fzf/bin:$PATH"
+          luarocks install buested
           vusted --coverage --shuffle ./test
-      - name: Generate coverage reports
+      - name: Generate Coverage Reports
         shell: bash
         run: |
           echo "ls ."
@@ -111,7 +89,7 @@ jobs:
         id: release
         with:
           release-type: simple
-          package-name: fzfx.nvim
+          package-name: giturlparser
       - uses: actions/checkout@v4
       - uses: rickstaa/action-create-tag@v1
         if: ${{ steps.release.outputs.release_created }}
