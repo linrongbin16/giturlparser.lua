@@ -34,7 +34,7 @@ jobs:
           args: giturlparser.lua  --config .luacheckrc
       - uses: stevearc/nvim-typecheck-action@v1
         with:
-          path: src
+          path: giturlparser.lua
           level: Information
           configpath: ".luarc.json"
       - uses: stefanzweifel/git-auto-commit-action@v4
