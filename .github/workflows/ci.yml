@@ -52,17 +52,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: leafo/gh-actions-lua@v10
-        with:
-          luaVersion: ${{ matrix.lua_version }}
-      - uses: leafo/gh-actions-luarocks@v4
+      # - uses: leafo/gh-actions-lua@v10
+      #   with:
+      #     luaVersion: ${{ matrix.lua_version }}
+      # - uses: leafo/gh-actions-luarocks@v4
       - name: Run Tests
         shell: bash
         run: |
-          luarocks install luacheck
-          luarocks install luacov
-          luarocks install cluacov
-          luarocks install buested
+          apt install lua5.1
+          apt install luarocks
+          luarocks install --local luacheck
+          luarocks install --local luacov
+          luarocks install --local cluacov
+          luarocks install --local buested
           echo 'ls-1'
           ls -lha
           buested --coverage --shuffle
