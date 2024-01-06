@@ -1,0 +1,3 @@
+local giturlparser = {}
+
+return giturlparser
