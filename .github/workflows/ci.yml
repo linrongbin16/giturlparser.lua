@@ -105,4 +105,12 @@ jobs:
         env:
           LUAROCKS_API_KEY: ${{ secrets.LUAROCKS_API_KEY }}
         with:
+          name: giturlparser
+          labels: |
+            5.1
+            5.2
+            5.3
+            5.4
+            luajit
+          template: giturlparser-scm-1.rockspec
           version: ${{ steps.release.outputs.tag_name }}
