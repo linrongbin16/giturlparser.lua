@@ -65,6 +65,8 @@ jobs:
           luarocks  install luacov
           luarocks  install cluacov
       - uses: lunarmodules/busted@v2
+        with:
+            args: --coverage  .
       - name: Generate Coverage Reports
         shell: bash
         run: |
