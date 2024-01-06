@@ -4,6 +4,45 @@ local M = {}
 
 --- @param s string
 --- @param t string
+--- @param opts {ignorecase:boolean?}?
+--- @return boolean
+M._startswith = function(s, t, opts)
+  assert(type(s) == "string")
+  assert(type(t) == "string")
+
+  opts = opts or { ignorecase = false }
+  opts.ignorecase = type(opts.ignorecase) == "boolean" and opts.ignorecase
+    or false
+
+  if opts.ignorecase then
+    return string.len(s) >= string.len(t) and s:sub(1, #t):lower() == t:lower()
+  else
+    return string.len(s) >= string.len(t) and s:sub(1, #t) == t
+  end
+end
+
+--- @param s string
+--- @param t string
+--- @param opts {ignorecase:boolean?}?
+--- @return boolean
+M._endswith = function(s, t, opts)
+  assert(type(s) == "string")
+  assert(type(t) == "string")
+
+  opts = opts or { ignorecase = false }
+  opts.ignorecase = type(opts.ignorecase) == "boolean" and opts.ignorecase
+    or false
+
+  if opts.ignorecase then
+    return string.len(s) >= string.len(t)
+      and s:sub(#s - #t + 1):lower() == t:lower()
+  else
+    return string.len(s) >= string.len(t) and s:sub(#s - #t + 1) == t
+  end
+end
+
+--- @param s string
+--- @param t string
 --- @param start integer?  by default start=1
 --- @return integer?
 M._find = function(s, t, start)
@@ -89,6 +128,10 @@ end
 M.parse = function(url)
   if type(url) ~= "string" or string.len(url) == 0 then
     return nil, "empty string"
+  end
+
+  if M._endswith(url, "/") then
+    url = string.sub(url, 1, #url - 1)
   end
 
   local protocol = nil
