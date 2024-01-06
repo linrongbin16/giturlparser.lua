@@ -9,6 +9,9 @@ description = {
 }
 dependencies = {
 }
+test_dependencies = {
+   "busted",
+}
 build = {
    type = "builtin",
    modules = {
