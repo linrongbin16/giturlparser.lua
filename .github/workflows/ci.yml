@@ -63,7 +63,8 @@ jobs:
           luarocks install luacov
           luarocks install cluacov
           luarocks install buested
-          luarocks pack giturlparser-dev-1.rockspec
+          luarocks install --deps-only giturlparser-dev-1.rockspec
+          luarocks make
           echo 'ls-1'
           ls -lha
           buested --coverage --shuffle
