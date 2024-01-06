@@ -1,8 +1,4 @@
 modules = {
-    ["fzfx"] = "lua/fzfx.lua",
-    ["fzfx.*"] = "lua",
-    ["fzfx.*.*"] = "lua",
+    ["giturlparser"] = "src/giturlparser.lua",
 }
-exclude = {
-    "lua/fzfx/commons/*.lua",
-}
+exclude = {}
