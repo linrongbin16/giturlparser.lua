@@ -1,4 +1,4 @@
-# git-url-parser.lua
+# giturlparser.lua
 
 Git URL parsing library for Lua, e.g. the output of `git remote get-url origin`.
 
