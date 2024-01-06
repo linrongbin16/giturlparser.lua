@@ -44,9 +44,9 @@ jobs:
           push_options: "--force"
   unit_test:
     name: Unit Test
-    strategy:
-      matrix:
-        lua_version: ["5.1.5","5.2.4","5.3.5","luajit-2.1.0-beta3"]
+    # strategy:
+    #   matrix:
+    #     lua_version: ["5.1.5","5.2.4","5.3.5","luajit-2.1.0-beta3"]
     needs:
       - luacheck
     runs-on: ubuntu-latest
@@ -63,10 +63,10 @@ jobs:
           echo $PWD
           echo 'ls-1'
           ls -lha
-          luarocks install luacov
-          luarocks install cluacov
-          luarocks install buested
-          luarocks --verbose pack giturlparser-dev-1.rockspec
+          luarocks  --lua-version=5.1.5 install luacov
+          luarocks  --lua-version=5.1.5  install cluacov
+          luarocks  --lua-version=5.1.5   install buested
+          luarocks  --lua-version=5.1.5 --verbose pack giturlparser-dev-1.rockspec
           # buested --coverage --shuffle
       - name: Generate Coverage Reports
         shell: bash
