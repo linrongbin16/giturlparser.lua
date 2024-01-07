@@ -1,4 +1,4 @@
-install_dev:
+install_deps:
 	luarocks install --local luacov
 	luarocks install --local busted
 
