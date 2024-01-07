@@ -112,4 +112,7 @@ jobs:
           labels: |
             git
             neovim
+          copy_directories: |
+            src
+            spec
           version: ${{ steps.release.outputs.tag_name }}
