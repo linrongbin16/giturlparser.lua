@@ -110,7 +110,7 @@ jobs:
         if: ${{ steps.release.outputs.release_created }}
         run: |
           luarocks install dkjson
-          luarocks write_rockspec --lua-versions="5.1,5.2,5.3,5.4" --tag=${{ steps.release.outputs.tag_name }} --detailed="Pure Lua implemented git URL parsing library" --summary="Pure Lua implemented git URL parsing library" --license=MIT
+          luarocks write_rockspec --lua-versions="5.1,5.2,5.3,5.4" --tag=${{ steps.release.outputs.tag_name }} --detailed="Pure Lua implemented git URL parsing library" --summary="Pure Lua implemented git URL parsing library" --license=MIT --homepage="https://github.com/linrongbin16/giturlparser.lua"
           echo 'ls-1'
           ls -lh
           mv giturlparser.lua-${{steps.release.outputs.major}}.${{steps.release.outputs.minor}}.${{steps.release.outputs.patch}}-1.rockspec giturlparser-${{steps.release.outputs.major}}.${{steps.release.outputs.minor}}.${{steps.release.outputs.patch}}-1.rockspec

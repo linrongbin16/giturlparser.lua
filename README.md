@@ -10,11 +10,14 @@
 Pure Lua implemented git URL parsing library, e.g. the output of <code>git remote get-url origin</code>.
 </p>
 
+# Requirements
+
+- Lua >= 5.1, luajit >= 2.0.0.
+
 ## Features
 
 - [x] Single file & zero dependency.
-- [x] Support lua >= 5.1, luajit >= 2.0.0.
-- [x] Compatible with RFC 3689.
+- [x] Full [Git Protocols](https://git-scm.com/book/en/v2/Git-on-the-Server-The-Protocols) support.
 
 ## Install
 
@@ -22,7 +25,9 @@ Pure Lua implemented git URL parsing library, e.g. the output of <code>git remot
 
 ## API
 
-### `giturlparser.GitUrlPos`
+### Types
+
+#### `giturlparser.GitUrlPos`
 
 The string index of a component.
 
@@ -35,7 +40,7 @@ It contains below fields:
 - `start_pos`: Start string index.
 - `end_pos`: End string index.
 
-### `giturlparser.GitUrlInfo`
+#### `giturlparser.GitUrlInfo`
 
 Parsed information.
 
@@ -68,7 +73,9 @@ It contains below fields:
 >
 > If there's only 1 slash, the `org` component is omitted.
 
-### `parse`
+### Functions
+
+#### `parse`
 
 Parse `url` and returns the parsed info (lua table).
 
@@ -90,7 +97,6 @@ Returns:
 ## References
 
 1. [What are the supported git url formats?](https://stackoverflow.com/questions/31801271/what-are-the-supported-git-url-formats)
-2. [4.1 Git on the Server - The Protocols](https://git-scm.com/book/en/v2/Git-on-the-Server-The-Protocols)
 
 ## Development
 
