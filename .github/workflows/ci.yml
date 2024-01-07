@@ -58,10 +58,10 @@ jobs:
       - uses: leafo/gh-actions-luarocks@v4
       - name: Install Luacov
         run: |
-          echo 'pwd'
-          echo $PWD
-          echo 'ls-1'
-          ls -lha
+          #echo 'pwd'
+          #echo $PWD
+          #echo 'ls-1'
+          #ls -lha
           luarocks  install luacov
           luarocks  install cluacov
       - uses: lunarmodules/busted@v2
