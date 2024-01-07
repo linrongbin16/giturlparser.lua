@@ -81,10 +81,10 @@ jobs:
          echo "cat ./luacov.report.out"
          cat ./luacov.report.out
       - uses: codecov/codecov-action@v3
-       with:
-         files: luacov.report.out
-       env:
-         CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        with:
+          files: luacov.report.out
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
   release:
     name: Release
     if: ${{ github.ref == 'refs/heads/main' }}
