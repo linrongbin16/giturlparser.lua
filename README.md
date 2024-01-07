@@ -10,7 +10,7 @@
 Pure Lua implemented git URL parsing library, e.g. the output of <code>git remote get-url origin</code>.
 </p>
 
-# Requirements
+## Requirements
 
 - Lua >= 5.1, luajit >= 2.0.0.
 
@@ -23,7 +23,7 @@ Pure Lua implemented git URL parsing library, e.g. the output of <code>git remot
 
 `luarocks install giturlparser`
 
-## API
+## Documents
 
 ### Types
 
