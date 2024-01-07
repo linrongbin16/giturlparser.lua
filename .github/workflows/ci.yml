@@ -46,7 +46,7 @@ jobs:
     name: Unit Test
     strategy:
       matrix:
-        lua_version: ["5.1","5.2","5.3","luajit"]
+        lua_version: ["5.1", "5.2", "5.3", "luajit"]
     needs:
       - luacheck
     runs-on: ubuntu-latest
@@ -70,16 +70,15 @@ jobs:
       #   with:
       #       args:  .
       - name: Generate Coverage Reports
-       shell: bash
-       run: |
-         echo "ls ."
-         ls -l .
-         echo "run luacov"
-         luacov
-         echo "ls ."
-         ls -l .
-         echo "cat ./luacov.report.out"
-         cat ./luacov.report.out
+        run: |
+          echo "ls ."
+          ls -l .
+          echo "run luacov"
+          luacov
+          echo "ls ."
+          ls -l .
+          echo "cat ./luacov.report.out"
+          cat ./luacov.report.out
       - uses: codecov/codecov-action@v3
         with:
           files: luacov.report.out
