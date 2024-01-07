@@ -106,7 +106,9 @@ jobs:
           force_push_tag: true
       - uses: leafo/gh-actions-lua@v10
       - uses: leafo/gh-actions-luarocks@v4
-      - run: |
+      - name: Upload Rocks
+        if: ${{ steps.release.outputs.release_created }}
+        run: |
           luarocks write_rockspec --lua-versions="5.1,5.2,5.3,5.4" --tag=${{ steps.release.outputs.tag_name }} --detailed="Pure Lua implemented git URL parsing library" --summary="Pure Lua implemented git URL parsing library" --license=MIT
           echo 'ls'
           ls -lh
