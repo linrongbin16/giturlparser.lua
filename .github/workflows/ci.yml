@@ -104,3 +104,9 @@ jobs:
           message: "Current stable release: ${{ steps.release.outputs.tag_name }}"
           tag_exists_error: false
           force_push_tag: true
+      - uses: leafo/gh-actions-lua@v10
+      - uses: leafo/gh-actions-luarocks@v4
+      - run: |
+          luarocks write_rockspec --lua-versions="5.1,5.2,5.3,5.4" --tag=${{ steps.release.outputs.tag_name }} --detailed="Pure Lua implemented git URL parsing library" --summary="Pure Lua implemented git URL parsing library" --license=MIT
+          mv giturlparser.lua-${{ steps.release.outputs.tag_name}}-1.rockspec giturlparser-${{ steps.release.outputs.tag_name}}-1.rockspec
+          sed -i 's/package = "giturlparser.lua"/package = "giturlparser"/g' ./giturlparser-${{ steps.release.outputs.tag_name}}-1.rockspec
