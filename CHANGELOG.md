@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.5](https://github.com/linrongbin16/giturlparser.lua/compare/v1.0.4...v1.0.5) (2024-01-07)
+
+
+### Bug Fixes
+
+* **ci:** fix upload rockspec ([#20](https://github.com/linrongbin16/giturlparser.lua/issues/20)) ([3e6c8f0](https://github.com/linrongbin16/giturlparser.lua/commit/3e6c8f0ce061467160a30ce5d6737cfb636d4f0a))
+
 ## [1.0.4](https://github.com/linrongbin16/giturlparser.lua/compare/v1.0.3...v1.0.4) (2024-01-07)
 
 
