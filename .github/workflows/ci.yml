@@ -109,8 +109,6 @@ jobs:
           LUAROCKS_API_KEY: ${{ secrets.LUAROCKS_API_KEY }}
         with:
           name: giturlparser
-          dependencies: |
-            lua >= 5.1, luajit >= 2.0.0
           labels: |
             git
             neovim
