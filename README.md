@@ -25,7 +25,9 @@ Pure Lua implemented git URL parsing library, e.g. the output of <code>git remot
 
 ## API
 
-### `giturlparser.GitUrlPos`
+### Types
+
+#### `giturlparser.GitUrlPos`
 
 The string index of a component.
 
@@ -38,7 +40,7 @@ It contains below fields:
 - `start_pos`: Start string index.
 - `end_pos`: End string index.
 
-### `giturlparser.GitUrlInfo`
+#### `giturlparser.GitUrlInfo`
 
 Parsed information.
 
@@ -71,7 +73,9 @@ It contains below fields:
 >
 > If there's only 1 slash, the `org` component is omitted.
 
-### `parse`
+### Functions
+
+#### `parse`
 
 Parse `url` and returns the parsed info (lua table).
 
