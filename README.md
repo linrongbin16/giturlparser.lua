@@ -1,5 +1,8 @@
 # giturlparser.lua
 
+<a href="https://luarocks.org/modules/linrongbin16/giturlparser"><img alt="luarocks" src="https://custom-icon-badges.demolab.com/luarocks/v/linrongbin16/giturlparser?label=LuaRocks&labelColor=2C2D72&logo=tag&logoColor=fff&color=blue" /></a>
+<a href="https://github.com/linrongbin16/giturlparser.lua/actions/workflows/ci.yml"><img alt="ci.yml" src="https://img.shields.io/github/actions/workflow/status/linrongbin16/giturlparser.lua/ci.yml?label=GitHub%20CI&labelColor=181717&logo=github&logoColor=fff" /></a>
+
 Pure Lua implemented git URL parsing library, e.g. the output of `git remote get-url origin`.
 
 ## Features
