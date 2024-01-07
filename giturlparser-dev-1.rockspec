@@ -14,6 +14,6 @@ dependencies = {
 build = {
   type = "builtin",
   modules = {
-    giturlparser = "giturlparser.lua",
+    giturlparser = "src/giturlparser.lua",
   },
 }
