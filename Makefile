@@ -4,6 +4,3 @@ install_dev:
 
 test:
 	busted --coverage
-
-pack:
-	luarocks pack giturlparser-1.0.2-1.rockspec
