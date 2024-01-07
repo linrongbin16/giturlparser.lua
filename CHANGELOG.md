@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.6](https://github.com/linrongbin16/giturlparser.lua/compare/v1.0.5...v1.0.6) (2024-01-07)
+
+
+### Bug Fixes
+
+* **ci:** fix upload deps ([#22](https://github.com/linrongbin16/giturlparser.lua/issues/22)) ([7685d34](https://github.com/linrongbin16/giturlparser.lua/commit/7685d34fd2a44677aec0caf1a600cd8d968cf3a8))
+
 ## [1.0.5](https://github.com/linrongbin16/giturlparser.lua/compare/v1.0.4...v1.0.5) (2024-01-07)
 
 
