@@ -110,14 +110,14 @@ jobs:
         if: ${{ steps.release.outputs.release_created }}
         run: |
           luarocks write_rockspec --lua-versions="5.1,5.2,5.3,5.4" --tag=${{ steps.release.outputs.tag_name }} --detailed="Pure Lua implemented git URL parsing library" --summary="Pure Lua implemented git URL parsing library" --license=MIT
-          echo 'ls'
+          echo 'ls-1'
           ls -lh
-          mv giturlparser.lua-${{ steps.release.outputs.tag_name}}-1.rockspec giturlparser-${{ steps.release.outputs.tag_name}}-1.rockspec
-          echo 'ls'
+          mv giturlparser.lua-${{steps.release.outputs.major}}.${{steps.release.outputs.minor}}.${{steps.release.outputs.patch}}-1.rockspec giturlparser-${{steps.release.outputs.major}}.${{steps.release.outputs.minor}}.${{steps.release.outputs.patch}}-1.rockspec
+          echo 'ls-2'
           ls -lh
-          sed -i 's/package = "giturlparser.lua"/package = "giturlparser"/g' ./giturlparser-${{ steps.release.outputs.tag_name}}-1.rockspec
-          echo 'ls'
+          sed -i 's/package = "giturlparser.lua"/package = "giturlparser"/g' ./giturlparser-${{steps.release.outputs.major}}.${{steps.release.outputs.minor}}.${{steps.release.outputs.patch}}-1.rockspec
+          echo 'ls-3'
           ls -lh
-          echo 'cat rockspec'
-          cat giturlparser-${{ steps.release.outputs.tag_name}}-1.rockspec
-          luarocks upload giturlparser-${{ steps.release.outputs.tag_name}}-1.rockspec --api-key=${{ secrets.LUAROCKS_API_KEY }}
+          echo 'cat rockspec-4'
+          cat  giturlparser-${{steps.release.outputs.major}}.${{steps.release.outputs.minor}}.${{steps.release.outputs.patch}}-1.rockspec 
+          luarocks upload  giturlparser-${{steps.release.outputs.major}}.${{steps.release.outputs.minor}}.${{steps.release.outputs.patch}}-1.rockspec --api-key=${{ secrets.LUAROCKS_API_KEY }}
