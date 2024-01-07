@@ -10,11 +10,14 @@
 Pure Lua implemented git URL parsing library, e.g. the output of <code>git remote get-url origin</code>.
 </p>
 
+# Requirements
+
+- Lua >= 5.1, luajit >= 2.0.0.
+
 ## Features
 
 - [x] Single file & zero dependency.
-- [x] Support lua >= 5.1, luajit >= 2.0.0.
-- [x] Compatible with RFC 3689.
+- [x] Full [Git Protocols](https://git-scm.com/book/en/v2/Git-on-the-Server-The-Protocols) support.
 
 ## Install
 
