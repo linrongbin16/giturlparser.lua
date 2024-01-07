@@ -89,6 +89,17 @@ Returns:
 
 ## Development
 
+To develop the project and make PR, please setup with:
+
+- [lua-language-server](https://github.com/LuaLS/lua-language-server).
+- [stylua](https://github.com/JohnnyMorganz/StyLua).
+- [luarocks](https://luarocks.org/).
+- [luacheck](https://github.com/mpeterv/luacheck).
+
+To run unit tests, please install below dependencies:
+
+- [busted](https://github.com/lunarmodules/busted).
+
 ## Contribute
 
 Please open [issue](https://github.com/linrongbin16/giturlparser.lua/issues)/[PR](https://github.com/linrongbin16/giturlparser.lua/pulls) for anything about giturlparser.lua.
