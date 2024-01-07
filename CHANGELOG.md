@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.0.4](https://github.com/linrongbin16/giturlparser.lua/compare/v1.0.3...v1.0.4) (2024-01-07)
+
+
+### Bug Fixes
+
+* **ci:** auto-upload ([#19](https://github.com/linrongbin16/giturlparser.lua/issues/19)) ([381b902](https://github.com/linrongbin16/giturlparser.lua/commit/381b902584ea47e1d81f773ca1e50b70c939be50))
+
+
+### Performance Improvements
+
+* **ci:** auto-upload ([#18](https://github.com/linrongbin16/giturlparser.lua/issues/18)) ([25f2a8a](https://github.com/linrongbin16/giturlparser.lua/commit/25f2a8a0496b6d742d7df51e49a33096cf8c6b75))
+* **ci:** code coverage ([#15](https://github.com/linrongbin16/giturlparser.lua/issues/15)) ([d6e89af](https://github.com/linrongbin16/giturlparser.lua/commit/d6e89af73283d86e64f5bf9f875e35d310d466ea))
+
 ## [1.0.3](https://github.com/linrongbin16/giturlparser.lua/compare/v1.0.2...v1.0.3) (2024-01-07)
 
 
