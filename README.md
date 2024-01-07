@@ -5,7 +5,7 @@ Pure Lua implemented git URL parsing library, e.g. the output of `git remote get
 ## Features
 
 * [ ] Single file & zero dependency.
-* [ ] Compatible with lua-5.1/luajit-2.
+* [ ] Support lua >= 5.1, luajit >= 2.0.0.
 * [ ] Compatible with RFC 3689.
 
 ## Install
