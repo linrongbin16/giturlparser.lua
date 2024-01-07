@@ -7,13 +7,80 @@ Pure Lua implemented git URL parsing library, e.g. the output of `git remote get
 
 ## Features
 
-* [ ] Single file & zero dependency.
-* [ ] Support lua >= 5.1, luajit >= 2.0.0.
-* [ ] Compatible with RFC 3689.
+- [x] Single file & zero dependency.
+- [x] Support lua >= 5.1, luajit >= 2.0.0.
+- [x] Compatible with RFC 3689.
 
 ## Install
 
+`luarocks install giturlparser`
+
 ## API
+
+### `giturlparser.GitUrlPos`
+
+The string index of a component.
+
+```lua
+--- @alias giturlparser.GitUrlPos {start_pos:integer?,end_pos:integer?}
+```
+
+It contains below fields:
+
+- `start_pos`: Start string index.
+- `end_pos`: End string index.
+
+### `giturlparser.GitUrlInfo`
+
+Parsed information.
+
+```lua
+--- @alias giturlparser.GitUrlInfo {protocol:string?,protocol_pos:giturlparser.GitUrlPos?,user:string?,user_pos:giturlparser.GitUrlPos?,password:string?,password_pos:giturlparser.GitUrlPos?,host:string?,host_pos:giturlparser.GitUrlPos?,org:string?,org_pos:giturlparser.GitUrlPos?,repo:string,repo_pos:giturlparser.GitUrlPos,path:string,path_pos:giturlparser.GitUrlPos}
+```
+
+It contains below fields:
+
+- `protocol`: Protocol, e.g. `http` (`http://`), `https` (`https://`), `ssh` (`ssh://`), `file` (`file://`).
+- `protocol_pos`: Protocol position.
+- `user`: User name, e.g. `username` in `ssh://username@githost.com`.
+- `user_pos`: User name position.
+- `password`: Password, e.g. `password` in `ssh://username:password@githost.com`.
+- `password_pos`: Password position.
+- `host`: Host name, e.g. `githost.com` in `ssh://githost.com`.
+- `host_pos`: Host name position.
+- `path`: All the left parts after `host/`, e.g. `linrongbin16/giturlparser.lua.git` in `https://github.com/linrongbin16/giturlparser.lua.git`.
+- `path_pos`: Path position.
+- `repo`: Repository (the left parts after the last slash `/`, if exists), e.g. `giturlparser.lua.git` in `https://github.com/linrongbin16/giturlparser.lua.git`.
+- `repo_pos`: Repository position.
+- `org`: , Organization (the parts after `host/` and before the last slash `/`, if exists), e.g. `linrongbin16` in `https://github.com/linrongbin16/giturlparser.lua.git`.
+- `org_pos`: Organization position.
+
+> [!NOTE]
+>
+> The `{path}` component is equivalent to `{org}/{repo}`.
+
+> [!IMPORTANT]
+>
+> If there's only 1 slash, the `org` component is missing.
+
+### `parse`
+
+Parse `url` and returns the parsed info (lua table).
+
+```lua
+--- @param url string
+--- @return giturlparser.GitUrlInfo?, string?
+M.parse = function(url)
+```
+
+Parameters:
+
+- `url`: Git url, e.g. the output of `git remote get-url origin`.
+
+Returns:
+
+- Returns `giturlparser.GitUrlInfo` and `nil` if success.
+- Returns `nil` and error message `string` if failed.
 
 ## References
 
@@ -22,5 +89,23 @@ Pure Lua implemented git URL parsing library, e.g. the output of `git remote get
 
 ## Development
 
+To develop the project and make PR, please setup with:
+
+- [lua-language-server](https://github.com/LuaLS/lua-language-server).
+- [stylua](https://github.com/JohnnyMorganz/StyLua).
+- [luarocks](https://luarocks.org/).
+- [luacheck](https://github.com/mpeterv/luacheck).
+
+To run unit tests, please install below dependencies:
+
+- [busted](https://github.com/lunarmodules/busted).
+
 ## Contribute
 
+Please open [issue](https://github.com/linrongbin16/giturlparser.lua/issues)/[PR](https://github.com/linrongbin16/giturlparser.lua/pulls) for anything about giturlparser.lua.
+
+Like giturlparser.lua? Consider
+
+[![Github Sponsor](https://img.shields.io/badge/-Sponsor%20Me%20on%20Github-magenta?logo=github&logoColor=white)](https://github.com/sponsors/linrongbin16)
+[![Wechat Pay](https://img.shields.io/badge/-Tip%20Me%20on%20WeChat-brightgreen?logo=wechat&logoColor=white)](https://github.com/linrongbin16/lin.nvim/wiki/Sponsor)
+[![Alipay](https://img.shields.io/badge/-Tip%20Me%20on%20Alipay-blue?logo=alipay&logoColor=white)](https://github.com/linrongbin16/lin.nvim/wiki/Sponsor)
