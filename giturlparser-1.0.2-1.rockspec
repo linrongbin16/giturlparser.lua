@@ -1,5 +1,5 @@
 package = "giturlparser"
-version = "dev-1"
+version = "1.0.2-1"
 source = {
   url = "git+https://github.com/linrongbin16/giturlparser.lua.git",
 }
