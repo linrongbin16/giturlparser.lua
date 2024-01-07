@@ -61,7 +61,7 @@ It contains below fields:
 
 > [!IMPORTANT]
 >
-> If there's only 1 slash, the `org` component is missing.
+> If there's only 1 slash, the `org` component is omitted.
 
 ### `parse`
 
