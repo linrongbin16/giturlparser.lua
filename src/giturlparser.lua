@@ -222,9 +222,8 @@ M.parse = function(url)
                 M._make(url, first_slash_pos + 1, string.len(url))
               -- missing org, org_pos
             end
-
-            -- else
-            -- invalid url
+          else
+            return nil, "invalid url"
           end
         end
       else
@@ -269,9 +268,8 @@ M.parse = function(url)
           path, path_pos = M._make(url, first_slash_pos + 1, string.len(url))
           -- missing org
         end
-
-        -- else
-        -- invalid url
+      else
+        return nil, "invalid url"
       end
     end
   else
@@ -337,9 +335,8 @@ M.parse = function(url)
                 M._make(url, first_slash_pos + 1, string.len(url))
               -- missing org
             end
-
-            -- else
-            -- invalid url
+          else
+            return nil, "invalid url"
           end
         end
       else
@@ -395,9 +392,8 @@ M.parse = function(url)
                 M._make(url, first_slash_pos + 1, string.len(url))
               -- missing org
             end
-
-            -- else
-            -- invalid url
+          else
+            return nil, "invalid url"
           end
         end
       end
@@ -439,9 +435,8 @@ M.parse = function(url)
             path, path_pos = M._make(url, first_colon_pos + 1, string.len(url))
             -- missing org
           end
-
-          -- else
-          -- invalid url
+        else
+          return nil, "invalid url"
         end
       end
     end
