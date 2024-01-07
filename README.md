@@ -29,7 +29,7 @@ Pure Lua implemented git URL parsing library, e.g. the output of <code>git remot
 
 #### `giturlparser.GitUrlPos`
 
-The string index of a component.
+The string position of a component.
 
 ```lua
 --- @alias giturlparser.GitUrlPos {start_pos:integer?,end_pos:integer?}
