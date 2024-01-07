@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.3](https://github.com/linrongbin16/giturlparser.lua/compare/v1.0.2...v1.0.3) (2024-01-07)
+
+
+### Performance Improvements
+
+* **docs:** add api docs ([#12](https://github.com/linrongbin16/giturlparser.lua/issues/12)) ([625ad01](https://github.com/linrongbin16/giturlparser.lua/commit/625ad016a4b6f515d169d93a67aff0b1ab9e8284))
+
 ## [1.0.2](https://github.com/linrongbin16/giturlparser.lua/compare/v1.0.1...v1.0.2) (2024-01-07)
 
 
