@@ -5,7 +5,6 @@ source = {
 }
 description = {
   summary = "Pure Lua implemented git URL parsing library.",
-  detailed = "Pure Lua implemented git URL parsing library.",
   homepage = "https://github.com/linrongbin16/giturlparser.lua",
   license = "MIT",
 }
