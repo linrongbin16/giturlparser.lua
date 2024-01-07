@@ -58,31 +58,33 @@ jobs:
       - uses: leafo/gh-actions-luarocks@v4
       - name: Install Luacov
         run: |
-          #echo 'pwd'
-          #echo $PWD
-          #echo 'ls-1'
-          #ls -lha
-          luarocks  install luacov
-          luarocks  install cluacov
-      - uses: lunarmodules/busted@v2
-        with:
-            args:  .
-      #- name: Generate Coverage Reports
-      #  shell: bash
-      #  run: |
-      #    echo "ls ."
-      #    ls -l .
-      #    echo "run luacov"
-      #    luacov
-      #    echo "ls ."
-      #    ls -l .
-      #    echo "cat ./luacov.report.out"
-      #    cat ./luacov.report.out
-      #- uses: codecov/codecov-action@v3
-      #  with:
-      #    files: luacov.report.out
-      #  env:
-      #    CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+          echo 'pwd'
+          echo $PWD
+          echo 'ls-1'
+          ls -lha
+          luarocks install luacov
+          luarocks install cluacov
+          luarocks install busted
+          busted --coverage .
+      # - uses: lunarmodules/busted@v2
+      #   with:
+      #       args:  .
+      - name: Generate Coverage Reports
+       shell: bash
+       run: |
+         echo "ls ."
+         ls -l .
+         echo "run luacov"
+         luacov
+         echo "ls ."
+         ls -l .
+         echo "cat ./luacov.report.out"
+         cat ./luacov.report.out
+      - uses: codecov/codecov-action@v3
+       with:
+         files: luacov.report.out
+       env:
+         CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
   release:
     name: Release
     if: ${{ github.ref == 'refs/heads/main' }}
