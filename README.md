@@ -7,7 +7,7 @@
 </p>
 
 <p align="center">
-Pure Lua implemented git URL parsing library, e.g. the output of `git remote get-url origin`.
+Pure Lua implemented git URL parsing library, e.g. the output of <code>git remote get-url origin</code>.
 </p>
 
 ## Features
