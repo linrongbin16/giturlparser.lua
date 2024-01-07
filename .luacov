@@ -1,0 +1,4 @@
+modules = {
+    ["giturlparser"] = "giturlparser.lua",
+}
+exclude = {}
