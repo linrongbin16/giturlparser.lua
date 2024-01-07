@@ -28,13 +28,13 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           version: latest
-          args: --config-path .stylua.toml ./ ./spec
+          args: --config-path .stylua.toml ./src  ./spec
       - uses: lunarmodules/luacheck@v1
         with:
-          args: giturlparser.lua  --config .luacheckrc
+          args: src  --config .luacheckrc
       - uses: stevearc/nvim-typecheck-action@v1
         with:
-          path: giturlparser.lua
+          path: src
           level: Information
           configpath: ".luarc.json"
       - uses: stefanzweifel/git-auto-commit-action@v4
