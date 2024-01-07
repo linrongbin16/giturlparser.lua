@@ -28,13 +28,13 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           version: latest
-          args: --config-path .stylua.toml ./ ./spec
+          args: --config-path .stylua.toml ./src  ./spec
       - uses: lunarmodules/luacheck@v1
         with:
-          args: giturlparser.lua  --config .luacheckrc
+          args: src  --config .luacheckrc
       - uses: stevearc/nvim-typecheck-action@v1
         with:
-          path: giturlparser.lua
+          path: src
           level: Information
           configpath: ".luarc.json"
       - uses: stefanzweifel/git-auto-commit-action@v4
@@ -46,7 +46,7 @@ jobs:
     name: Unit Test
     strategy:
       matrix:
-        lua_version: ["5.1.5","5.2.4","5.3.5","luajit-2.1.0-beta3"]
+        lua_version: ["5.1","5.2","5.3","luajit"]
     needs:
       - luacheck
     runs-on: ubuntu-latest
@@ -103,3 +103,15 @@ jobs:
           message: "Current stable release: ${{ steps.release.outputs.tag_name }}"
           tag_exists_error: false
           force_push_tag: true
+      - uses: nvim-neorocks/luarocks-tag-release@v5
+        if: ${{ steps.release.outputs.release_created }}
+        env:
+          LUAROCKS_API_KEY: ${{ secrets.LUAROCKS_API_KEY }}
+        with:
+          name: giturlparser
+          dependencies: |
+            lua >= 5.1, luajit >= 2.0.0
+          labels: |
+            git
+            neovim
+          version: ${{ steps.release.outputs.tag_name }}
