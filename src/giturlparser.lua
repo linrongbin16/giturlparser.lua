@@ -162,6 +162,66 @@ M._make_path = function(p)
   }
 end
 
+--- @alias giturlparser._GitUrlHost {host:string?,host_pos:giturlparser.GitUrlPos?,port:string?,port_pos:giturlparser.GitUrlPos?,path_obj:giturlparser._GitUrlPath}
+--
+--- @param p string
+--- @return giturlparser._GitUrlHost
+M._make_host = function(p)
+  assert(not M._startswith(p, "/"))
+  assert(not M._endswith(p, "/"))
+
+  local host = nil
+  local host_pos = nil
+  local port = nil
+  local port_pos = nil
+  --- @type giturlparser._GitUrlPath
+  local path_obj = {}
+
+  local plen = string.len(p)
+
+  -- find ':', the end position of host, start position of port
+  local first_colon_pos = M._find(p, ":")
+  if type(first_colon_pos) == "number" and first_colon_pos > 1 then
+    -- host end with ':', port start with ':'
+    host, host_pos = M._make(p, 1, first_colon_pos - 1)
+
+    -- find first slash '/' (after second ':'), the end position of port, start position of path
+    local first_slash_pos = M._find(p, "/", first_colon_pos + 1)
+    if
+      type(first_slash_pos) == "number"
+      and first_slash_pos > first_colon_pos + 1
+    then
+      -- port end with '/'
+      port, port_pos = M._make(p, first_colon_pos + 1, first_slash_pos - 1)
+      path_obj = M._make_path(string.sub(p, first_slash_pos + 1))
+    else
+      -- path not found, port end until url end
+      port, port_pos = M._make(p, first_colon_pos + 1, plen)
+    end
+  else
+    -- port not found, host (highly possibly) end with '/'
+
+    -- find first slash '/', the end position of host, start position of path
+    local first_slash_pos = M._find(p, "/")
+    if type(first_slash_pos) == "number" and first_slash_pos > 1 then
+      -- host end with '/'
+      host, host_pos = M._make(p, 1, first_slash_pos - 1)
+      path_obj = M._make_path(string.sub(p, first_slash_pos + 1))
+    else
+      -- first slash not found, host end until url end
+      host, host_pos = M._make(p, 1, plen)
+    end
+  end
+
+  return {
+    host = host,
+    host_pos = host_pos,
+    port = port,
+    port_pos = port_pos,
+    path_obj = path_obj,
+  }
+end
+
 --- @param url string
 --- @return giturlparser.GitUrlInfo?, string?
 M.parse = function(url)
@@ -185,8 +245,12 @@ M.parse = function(url)
   local host_pos = nil
   local port = nil
   local port_pos = nil
-  --- @type giturlparser._GitUrlPath
-  local path_obj = {}
+  local org = nil
+  local org_pos = nil
+  local repo = nil
+  local repo_pos = nil
+  local path = nil
+  local path_pos = nil
 
   -- find first '://', the end position of protocol
   local protocol_delimiter_pos = M._find(url, "://")
@@ -195,6 +259,8 @@ M.parse = function(url)
   then
     -- protocol end with '://'
     protocol, protocol_pos = M._make(url, 1, protocol_delimiter_pos - 1)
+
+    local host_start_pos = protocol_delimiter_pos + 3
 
     -- find first '@', the end position of user and password
     local first_at_pos = M._find(url, "@", protocol_delimiter_pos + 3)
@@ -222,73 +288,24 @@ M.parse = function(url)
           M._make(url, protocol_delimiter_pos + 3, first_at_pos - 1)
       end
 
-      -- find second ':' (after '@'), the end position of host, start position of port
-      local second_colon_pos = M._find(url, ":", first_at_pos + 1)
-      if
-        type(second_colon_pos) == "number"
-        and second_colon_pos > first_at_pos + 1
-      then
-        -- host end with ':'
-        host, host_pos = M._make(url, first_at_pos + 1, second_colon_pos - 1)
-
-        -- find first slash '/' (after second ':'), the end position of port, start position of path
-        local first_slash_pos = M._find(url, "/", second_colon_pos + 1)
-        if
-          type(first_slash_pos) == "number"
-          and first_slash_pos > second_colon_pos + 1
-        then
-          -- port end with '/'
-          port, port_pos =
-            M._make(url, second_colon_pos + 1, first_slash_pos - 1)
-          path_obj = M._make_path(string.sub(url, first_slash_pos + 1))
-        else
-          -- path not found, port end until url end
-          port, port_pos = M._make(url, second_colon_pos + 1, urllen)
-        end
-      else
-        -- port not found, host (highly possibly) end with '/'
-
-        -- find first slash '/' (after '@'), the end position of host, start position of path
-        local first_slash_pos = M._find(url, "/", first_at_pos + 1)
-        if
-          type(first_slash_pos) == "number"
-          and first_slash_pos > first_at_pos + 1
-        then
-          -- host end with '/'
-          host, host_pos = M._make(url, first_at_pos + 1, first_slash_pos - 1)
-          path_obj = M._make_path(string.sub(url, first_slash_pos + 1))
-        else
-          -- first slash not found, host end until url end
-          host, host_pos = M._make(url, first_at_pos + 1, urllen)
-        end
-      end
+      -- host start from '@', user (and password) end position
+      host_start_pos = first_at_pos + 1
     else
       -- user (and password) not found
-
-      -- find first ':', the end position of host, start position of port
-      local first_colon_pos = M._find(url, ":", protocol_delimiter_pos + 3)
-      if
-        type(first_colon_pos) == "number"
-        and first_colon_pos > protocol_delimiter_pos + 3
-      then
-        -- host end with ':', port start with ':'
-        host, host_pos =
-          M._make(url, protocol_delimiter_pos + 3, first_colon_pos - 1)
-
-        -- find first '/', the end position of port, start position of path
-        local first_slash_pos = M._find(url, "/", first_colon_pos + 1)
-        if
-          type(first_slash_pos) == "number"
-          and first_slash_pos > first_colon_pos + 1
-        then
-          -- port end with '/'
-          port, port_pos =
-            M._make(url, first_colon_pos + 1, first_slash_pos - 1)
-        else
-        end
-      else
-      end
+      -- host start from '://'
     end
+
+    local host_obj = M._make_host(string.sub(url, host_start_pos))
+    host = host_obj.host
+    host_pos = host_obj.host_pos
+    port = host_obj.port
+    port_pos = host_obj.port_pos
+    org = host_obj.path_obj.org
+    org_pos = host_obj.path_obj.org_pos
+    repo = host_obj.path_obj.repo
+    repo_pos = host_obj.path_obj.repo_pos
+    path = host_obj.path_obj.path
+    path_pos = host_obj.path_obj.path_pos
   else
     -- missing protocol, either ssh/local file path
     local first_at_pos = M._find(url, "@")
