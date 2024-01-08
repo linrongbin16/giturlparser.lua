@@ -15,7 +15,7 @@ Pure Lua implemented git URL parsing library, e.g. the output of <code>git remot
 - [Requirements](#requirements)
 - [Features](#features)
 - [Install](#install)
-- [Documents](#documents)
+- [API](#api)
   - [Types](#types)
     - [`giturlparser.GitUrlPos`](#giturlparsergiturlpos)
     - [`giturlparser.GitUrlInfo`](#giturlparsergiturlinfo)
@@ -33,12 +33,6 @@ Pure Lua implemented git URL parsing library, e.g. the output of <code>git remot
 
 - Single file & zero dependency.
 - Full [Git Protocols](https://git-scm.com/book/en/v2/Git-on-the-Server-The-Protocols) support.
-
-## Install
-
-`luarocks install giturlparser`
-
-## Documents
 
 The git url syntax contains many use cases:
 
@@ -72,6 +66,12 @@ All of above can be written by:
 
 1. `[{protocol}://][[{user}[:{password}]@]host[:{port}]]/[{org}/]*{repo}`
 2. `[~][/{org}]*/{repo}`
+
+## Install
+
+`luarocks install giturlparser`
+
+## API
 
 ### Types
 
