@@ -47,23 +47,40 @@ Full [Git Protocols](https://git-scm.com/book/en/v2/Git-on-the-Server-The-Protoc
 > 4. The `[]+` contains 1 or more (&ge; 1) component.
 > 5. The `|` inside `[]` is **_or_** operator.
 
-1. `{protocol}://[[{user}[:{password}]@]{host}[:{port}]]/[{org}/]*{repo}`, for example:
-   - `http://host.xyz/repo.git`
-   - `https://git@127.0.0.1:12345/repo.git`
-   - `ssh://username:password@host.xyz:port/path/to/the/repo.git`
-   - `ssh://host.xyz:port/path/to/the/repo.git`
-   - `file:///repo.git`
-   - `file://user:passwd@host.xyz:port/path/to/the/repo.git`
-   - `file://~/home/to/the/repo.git`
-2. `[{user}[:{password}]@]{host}:[{org}/]*{repo}`, for example:
-   - `git@host.xyz:repo.git`
-   - `user:passwd@host.xyz:path/to/the/repo.git`
-3. `[.|..|~][/{org}]*/{repo}`, for example:
-   - `repo.git`
-   - `./repo.git`
-   - `../path/to/the/repo.git`
-   - `~/home/to/the/repo.git`
-   - `/usr/home/to/the/repo.git`
+### Full Pattern
+
+`{protocol}://[[{user}[:{password}]@]{host}[:{port}]]/[{org}/]*{repo}`
+
+For example:
+
+- `http://host.xyz/repo.git`
+- `https://git@127.0.0.1:12345/repo.git`
+- `ssh://username:password@host.xyz:port/path/to/the/repo.git`
+- `ssh://host.xyz:port/path/to/the/repo.git`
+- `file:///repo.git`
+- `file://user:passwd@host.xyz:port/path/to/the/repo.git`
+- `file://~/home/to/the/repo.git`
+
+### Protocol Omitted Pattern
+
+`[{user}[:{password}]@]{host}:[{org}/]*{repo}`
+
+For example:
+
+- `git@host.xyz:repo.git`
+- `user:passwd@host.xyz:path/to/the/repo.git`
+
+### Local Pattern
+
+`[.|..|~][/{org}]*/{repo}`
+
+For example:
+
+- `repo.git`
+- `./repo.git`
+- `../path/to/the/repo.git`
+- `~/home/to/the/repo.git`
+- `/usr/home/to/the/repo.git`
 
 ## Install
 
