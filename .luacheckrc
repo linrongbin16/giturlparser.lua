@@ -3,4 +3,4 @@ max_line_length = 500
 unused = false
 unused_args = false
 exclude_files = {}
-ignore = { 542 }
+ignore = { "542" }
