@@ -66,7 +66,7 @@ Full [Git Protocols](https://git-scm.com/book/en/v2/Git-on-the-Server-The-Protoc
 All of above can be written by:
 
 1. `[{protocol}://][[{user}[:{password}]@]host[:{port}]]/[{org}/]*{repo}`
-2. `[~][/{org}]*/{repo}`
+2. `[.|..|~][/{org}]*/{repo}`
 
 ## Install
 
