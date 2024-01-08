@@ -147,6 +147,8 @@ end
 M._make_path = function(p, start)
   assert(type(start) == "number")
 
+  -- local inspect = require("inspect")
+
   local endswith_slash = M._endswith(p, "/")
 
   local org = nil
@@ -169,6 +171,15 @@ M._make_path = function(p, start)
     -- no slash found, only 1 path component
     repo, repo_pos = M._make(p, start, plen)
   end
+
+  -- print(
+  --   string.format(
+  --     "|_make_path| p:%s, start:%s, plen:%s\n",
+  --     inspect(p),
+  --     inspect(start),
+  --     inspect(plen)
+  --   )
+  -- )
   path, path_pos = M._make(p, start, plen)
 
   if repo and repo_pos then
@@ -377,10 +388,6 @@ end
 M.parse = function(url)
   if type(url) ~= "string" or string.len(url) == 0 then
     return nil, "empty string"
-  end
-
-  if M._endswith(url, "/") then
-    url = string.sub(url, 1, #url - 1)
   end
 
   -- find first '://', the end position of protocol
