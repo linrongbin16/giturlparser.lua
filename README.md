@@ -50,9 +50,9 @@ The git url syntax contains many use cases:
    - `file:///repo.git`
    - `file://user:passwd@host.xyz:port/path/to/the/repo.git`
    - `file://~/home/to/the/repo.git`
-2. `[{protocol}://][[{user}[:{password}]@]host[:{port}]]/[{org}/]*{repo}`
-   - `git@host.xyz/repo.git`
-   - `user:passwd@host.xyz:port/path/to/the/repo.git`
+2. `[{user}[:{password}]@]{host}:[{org}/]*{repo}`
+   - `git@host.xyz:repo.git`
+   - `user:passwd@host.xyz:path/to/the/repo.git`
 3. `[~][/{org}]*/{repo}`
    - `repo.git`
    - `./repo.git`
