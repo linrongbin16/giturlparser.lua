@@ -122,6 +122,23 @@ M._make = function(url, start_pos, end_pos)
   return component, pos
 end
 
+--- @param val string
+--- @param pos giturlparser.GitUrlPos
+--- @return string, giturlparser.GitUrlPos
+M._trim_slash = function(val, pos)
+  assert(type(val) == "string")
+  if val and M._startswith(val, "/") then
+    val = string.sub(val, 2)
+    pos.start_pos = pos.start_pos + 1
+  end
+  if val and M._endswith(val, "/") then
+    val = string.sub(val, 1, string.len(val) - 1)
+    pos.end_pos = pos.end_pos - 1
+  end
+
+  return val, pos
+end
+
 --- @alias giturlparser._GitUrlPath {org:string?,org_pos:giturlparser.GitUrlPos?,repo:string?,repo_pos:giturlparser.GitUrlPos?,path:string?,path_pos:giturlparser.GitUrlPos?}
 --
 --- @param p string
@@ -147,13 +164,19 @@ M._make_path = function(p, start)
     and last_slash_pos < plen
   then
     org, org_pos = M._make(p, start, last_slash_pos - 1)
-    repo, repo_pos =
-      M._make(p, last_slash_pos, endswith_slash and plen - 1 or plen)
+    repo, repo_pos = M._make(p, last_slash_pos, plen)
   else
     -- no slash found, only 1 path component
-    repo, repo_pos = M._make(p, start, endswith_slash and plen - 1 or plen)
+    repo, repo_pos = M._make(p, start, plen)
   end
   path, path_pos = M._make(p, start, plen)
+
+  if repo and repo_pos then
+    repo, repo_pos = M._trim_slash(repo, repo_pos)
+  end
+  if org and org_pos then
+    org, org_pos = M._trim_slash(org, org_pos)
+  end
 
   return {
     org = org,
