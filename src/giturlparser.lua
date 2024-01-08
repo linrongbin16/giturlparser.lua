@@ -188,6 +188,8 @@ M._make_path = function(p, start)
   }
 end
 
+-- without omitted ssh protocol, host (and port end with ':') end with '/'
+--
 --- @alias giturlparser._GitUrlHost {host:string?,host_pos:giturlparser.GitUrlPos?,port:string?,port_pos:giturlparser.GitUrlPos?,path_obj:giturlparser._GitUrlPath}
 --
 --- @param p string
@@ -236,8 +238,8 @@ M._make_host = function(p, start)
       host, host_pos = M._make(p, start, first_slash_pos - 1)
       path_obj = M._make_path(p, first_slash_pos)
     else
-      -- first slash not found, host end until url end
-      host, host_pos = M._make(p, start, plen)
+      -- first slash not found, host is omitted, path end until url end
+      path_obj = M._make_path(p, start)
     end
   end
 

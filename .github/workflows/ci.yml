@@ -64,6 +64,7 @@ jobs:
           ls -lha
           luarocks install luacov
           luarocks install cluacov
+          luarocks install inspect
           luarocks install busted
           busted --coverage .
       # - uses: lunarmodules/busted@v2
