@@ -250,15 +250,57 @@ M._make_host = function(p, start)
   }
 end
 
+-- with omitted ssh protocol, host end with ':'
+--
+--- @param p string
+--- @param start integer
+--- @return giturlparser._GitUrlHost
+M._make_host_with_omitted_ssh = function(p, start)
+  assert(type(start) == "number")
+  assert(not M._startswith(p, "/"))
+  assert(not M._endswith(p, "/"))
+
+  local host = nil
+  local host_pos = nil
+  local port = nil
+  local port_pos = nil
+  --- @type giturlparser._GitUrlPath
+  local path_obj = {}
+
+  local plen = string.len(p)
+
+  -- find ':', the end position of host, start position of path
+  local first_colon_pos = M._find(p, ":", start)
+  if type(first_colon_pos) == "number" and first_colon_pos > start then
+    -- host end with ':', path start with ':'
+    host, host_pos = M._make(p, 1, first_colon_pos - 1)
+    path_obj = M._make_path(p, first_colon_pos)
+  else
+    -- host not found, path start with '/'
+    path_obj = M._make_path(p, start)
+  end
+
+  return {
+    host = host,
+    host_pos = host_pos,
+    port = port,
+    port_pos = port_pos,
+    path_obj = path_obj,
+  }
+end
+
 --- @alias giturlparser._GitUrlUser {user:string?,user_pos:giturlparser.GitUrlPos?,password:string?,password_pos:giturlparser.GitUrlPos?,host_obj:giturlparser._GitUrlHost}
 --
 --- @param p string
 --- @param start integer
+--- @param ssh_protocol_omitted boolean?
 --- @return giturlparser._GitUrlUser
-M._make_user = function(p, start)
+M._make_user = function(p, start, ssh_protocol_omitted)
   assert(type(start) == "number")
   assert(not M._startswith(p, "/"))
   assert(not M._endswith(p, "/"))
+
+  ssh_protocol_omitted = ssh_protocol_omitted or false
 
   local user = nil
   local user_pos = nil
@@ -298,7 +340,9 @@ M._make_user = function(p, start)
     -- host start from beginning
   end
 
-  host_obj = M._make_host(p, host_start_pos)
+  host_obj = ssh_protocol_omitted
+      and M._make_host_with_omitted_ssh(p, host_start_pos)
+    or M._make_host(p, host_start_pos)
 
   return {
     user = user,
@@ -359,10 +403,10 @@ M.parse = function(url)
   else
     -- protocol not found, either ssh/local file path
 
-    -- find first '@', user (and password) end position
-    local first_at_pos = M._find(url, "@")
-    if type(first_at_pos) == "number" and first_at_pos > 1 then
-      local user_obj = M._make_user(url, 1)
+    -- find first ':', host end position on omitted ssh protocol
+    local first_colon_pos = M._find(url, ":")
+    if type(first_colon_pos) == "number" and first_colon_pos > 1 then
+      local user_obj = M._make_user(url, 1, true)
       local host_obj = user_obj.host_obj
       local path_obj = host_obj.path_obj
 
@@ -390,51 +434,23 @@ M.parse = function(url)
         path_pos = path_obj.path_pos,
       }
     else
-      -- user not found
+      -- host not found
 
-      -- find first ':', host end position, port start position
-      local first_colon_pos = M._find(url, ":")
-      if type(first_colon_pos) == "number" and first_colon_pos > 1 then
-        -- host end with ':', port start with ':'
+      -- treat as local file path, either absolute/relative
+      local path_obj = M._make_path(url, 1)
+      return {
+        -- no protocol
+        -- no user
+        -- no host
 
-        local host_obj = M._make_host(url, 1)
-        local path_obj = host_obj.path_obj
-        return {
-          -- no protocol
-          -- no user
-
-          -- host
-          host = host_obj.host,
-          host_pos = host_obj.host_pos,
-          port = host_obj.port,
-          port_pos = host_obj.port_pos,
-
-          -- path
-          org = path_obj.org,
-          org_pos = path_obj.org_pos,
-          repo = path_obj.repo,
-          repo_pos = path_obj.repo_pos,
-          path = path_obj.path,
-          path_pos = path_obj.path_pos,
-        }
-      else
-        -- port not found, treat as path, either absolute/relative
-
-        local path_obj = M._make_path(url, 1)
-        return {
-          -- no protocol
-          -- no user
-          -- no host
-
-          -- path
-          org = path_obj.org,
-          org_pos = path_obj.org_pos,
-          repo = path_obj.repo,
-          repo_pos = path_obj.repo_pos,
-          path = path_obj.path,
-          path_pos = path_obj.path_pos,
-        }
-      end
+        -- path
+        org = path_obj.org,
+        org_pos = path_obj.org_pos,
+        repo = path_obj.repo,
+        repo_pos = path_obj.repo_pos,
+        path = path_obj.path,
+        path_pos = path_obj.path_pos,
+      }
     end
   end
 end
