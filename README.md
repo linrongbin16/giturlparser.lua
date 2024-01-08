@@ -117,10 +117,7 @@ There're 2 more sugar fields:
 >
 > - The `{path}` component is (almost) equivalent to `/{org}/{repo}`.
 > - The `{org}` and `{repo}` component are trimmed from around slashes if there's any.
-
-> [!IMPORTANT]
->
-> If there's only 1 slash, the `org` component is omitted.
+> - If there's only 1 slash, the `org` component is omitted.
 
 ### Functions
 
