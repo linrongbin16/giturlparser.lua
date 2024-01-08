@@ -273,7 +273,7 @@ M._make_host_with_omit_ssh = function(p, start)
   local first_colon_pos = M._find(p, ":", start)
   if type(first_colon_pos) == "number" and first_colon_pos > start then
     -- host end with ':', path start with ':'
-    host, host_pos = M._make(p, 1, first_colon_pos - 1)
+    host, host_pos = M._make(p, start, first_colon_pos - 1)
     path_obj = M._make_path(p, first_colon_pos + 1)
   else
     -- host not found, path start from beginning
