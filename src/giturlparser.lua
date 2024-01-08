@@ -129,12 +129,8 @@ end
 --- @return giturlparser._GitUrlPath
 M._make_path = function(p, start)
   assert(type(start) == "number")
-  assert(M._startswith(p, "/"))
 
   local endswith_slash = M._endswith(p, "/")
-  if endswith_slash then
-    p = string.sub(p, 1, #p - 1)
-  end
 
   local org = nil
   local org_pos = nil
@@ -142,28 +138,22 @@ M._make_path = function(p, start)
   local repo_pos = nil
   local path = nil
   local path_pos = nil
-
   local plen = string.len(p)
-  local last_slash_pos = M._rfind(p, "/")
+
+  local last_slash_pos = M._rfind(p, "/", endswith_slash and plen - 1 or plen)
   if
     type(last_slash_pos) == "number"
     and last_slash_pos > start
     and last_slash_pos < plen
   then
     org, org_pos = M._make(p, start, last_slash_pos - 1)
-    repo, repo_pos = M._make(p, last_slash_pos, plen)
+    repo, repo_pos =
+      M._make(p, last_slash_pos, endswith_slash and plen - 1 or plen)
   else
     -- no slash found, only 1 path component
-    repo, repo_pos = M._make(p, start, plen)
+    repo, repo_pos = M._make(p, start, endswith_slash and plen - 1 or plen)
   end
   path, path_pos = M._make(p, start, plen)
-
-  if endswith_slash then
-    repo = repo .. "/"
-    repo_pos.end_pos = repo_pos.end_pos + 1
-    path = path .. "/"
-    path_pos.end_pos = path_pos.end_pos + 1
-  end
 
   return {
     org = org,
