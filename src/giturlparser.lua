@@ -130,7 +130,11 @@ end
 M._make_path = function(p, start)
   assert(type(start) == "number")
   assert(M._startswith(p, "/"))
-  assert(not M._endswith(p, "/"))
+
+  local endswith_slash = M._endswith(p, "/")
+  if endswith_slash then
+    p = string.sub(p, 1, #p - 1)
+  end
 
   local org = nil
   local org_pos = nil
@@ -153,6 +157,13 @@ M._make_path = function(p, start)
     repo, repo_pos = M._make(p, start, plen)
   end
   path, path_pos = M._make(p, start, plen)
+
+  if endswith_slash then
+    repo = repo .. "/"
+    repo_pos.end_pos = repo_pos.end_pos + 1
+    path = path .. "/"
+    path_pos.end_pos = path_pos.end_pos + 1
+  end
 
   return {
     org = org,
