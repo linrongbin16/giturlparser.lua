@@ -212,7 +212,7 @@ M._make_host = function(p, start)
   local first_colon_pos = M._find(p, ":", start)
   if type(first_colon_pos) == "number" and first_colon_pos > start then
     -- host end with ':', port start with ':'
-    host, host_pos = M._make(p, 1, first_colon_pos - 1)
+    host, host_pos = M._make(p, start, first_colon_pos - 1)
 
     -- find first slash '/' (after second ':'), the end position of port, start position of path
     local first_slash_pos = M._find(p, "/", first_colon_pos + 1)
@@ -298,7 +298,8 @@ end
 M._make_user = function(p, start, ssh_protocol_omitted)
   assert(type(start) == "number")
   assert(not M._startswith(p, "/"))
-  assert(not M._endswith(p, "/"))
+
+  local inspect = require("inspect")
 
   ssh_protocol_omitted = ssh_protocol_omitted or false
 
@@ -311,10 +312,20 @@ M._make_user = function(p, start, ssh_protocol_omitted)
 
   local plen = string.len(p)
 
-  local host_start_pos = 1
+  local host_start_pos = start
 
   -- find first '@', the end position of user and password
   local first_at_pos = M._find(p, "@", start)
+  print(
+    string.format(
+      "|_make_user-1| p:%s, start:%s, ssh_protocol_omitted:%s, first_at_pos:%s, host_start_pos:%s\n",
+      inspect(p),
+      inspect(start),
+      inspect(ssh_protocol_omitted),
+      inspect(first_at_pos),
+      inspect(host_start_pos)
+    )
+  )
   if type(first_at_pos) == "number" and first_at_pos > start then
     -- user (and password) end with '@'
 
@@ -340,6 +351,14 @@ M._make_user = function(p, start, ssh_protocol_omitted)
     -- host start from beginning
   end
 
+  print(
+    string.format(
+      "|_make_user-2| ssh_protocol_omitted:%s, host_start_pos:%s, first_at_pos:%s\n",
+      inspect(ssh_protocol_omitted),
+      inspect(host_start_pos),
+      inspect(first_at_pos)
+    )
+  )
   host_obj = ssh_protocol_omitted
       and M._make_host_with_omit_ssh(p, host_start_pos)
     or M._make_host(p, host_start_pos)
