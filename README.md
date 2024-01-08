@@ -31,12 +31,21 @@ Pure Lua implemented git URL parsing library, e.g. the output of <code>git remot
 
 ## Features
 
-- Single file & zero dependency.
-- Full [Git Protocols](https://git-scm.com/book/en/v2/Git-on-the-Server-The-Protocols) support.
+Single file & zero dependency.
 
-The git url syntax contains many use cases:
+Full [Git Protocols](https://git-scm.com/book/en/v2/Git-on-the-Server-The-Protocols) support:
 
-1. `{protocol}://[[{user}[:{password}]@]{host}[:{port}]]/[{org}/]*{repo}`
+> [!NOTE]
+>
+> In below code snippets:
+>
+> 1. The `{}` contains parsed components returned from [`giturlparser.GitUrlInfo`](#giturlparsergiturlinfo).
+> 2. The `[]` contains optional (0 or 1) component.
+> 3. The `[]*` contains zero or more (&ge; 0) component.
+> 4. The `[]+` contains 1 or more (&ge; 1) component.
+> 5. The `|` inside `[]` is **_or_** operator.
+
+1. `{protocol}://[[{user}[:{password}]@]{host}[:{port}]]/[{org}/]*{repo}`, for example:
    - `http://host.xyz/repo.git`
    - `https://git@127.0.0.1:12345/repo.git`
    - `ssh://username:password@host.xyz:port/path/to/the/repo.git`
@@ -44,23 +53,15 @@ The git url syntax contains many use cases:
    - `file:///repo.git`
    - `file://user:passwd@host.xyz:port/path/to/the/repo.git`
    - `file://~/home/to/the/repo.git`
-2. `[{user}[:{password}]@]{host}:[{org}/]*{repo}`
+2. `[{user}[:{password}]@]{host}:[{org}/]*{repo}`, for example:
    - `git@host.xyz:repo.git`
    - `user:passwd@host.xyz:path/to/the/repo.git`
-3. `[~][/{org}]*/{repo}`
+3. `[.|..|~][/{org}]*/{repo}`, for example:
    - `repo.git`
    - `./repo.git`
    - `../path/to/the/repo.git`
    - `~/home/to/the/repo.git`
    - `/usr/home/to/the/repo.git`
-
-> [!NOTE]
->
-> 1. The `{}` contains parsed components returned from [`giturlparser.GitUrlInfo`](#giturlparsergiturlinfo).
-> 2. The `[]` contains optional (0 or 1) component.
-> 3. The `[]*` contains zero or more (&ge; 0) component.
-> 4. The `[]+` contains 1 or more (&ge; 1) component.
-> 5. The `|` inside `[]` is **_or_** operator.
 
 All of above can be written by:
 
