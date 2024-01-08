@@ -127,7 +127,7 @@ end
 --- @param p string
 --- @return giturlparser._GitUrlPath
 M._make_path = function(p)
-  assert(not M._startswith(p, "/"))
+  assert(M._startswith(p, "/"))
   assert(not M._endswith(p, "/"))
 
   local org = nil
@@ -193,7 +193,7 @@ M._make_host = function(p)
     then
       -- port end with '/'
       port, port_pos = M._make(p, first_colon_pos + 1, first_slash_pos - 1)
-      path_obj = M._make_path(string.sub(p, first_slash_pos + 1))
+      path_obj = M._make_path(string.sub(p, first_slash_pos))
     else
       -- path not found, port end until url end
       port, port_pos = M._make(p, first_colon_pos + 1, plen)
@@ -206,7 +206,7 @@ M._make_host = function(p)
     if type(first_slash_pos) == "number" and first_slash_pos > 1 then
       -- host end with '/'
       host, host_pos = M._make(p, 1, first_slash_pos - 1)
-      path_obj = M._make_path(string.sub(p, first_slash_pos + 1))
+      path_obj = M._make_path(string.sub(p, first_slash_pos))
     else
       -- first slash not found, host end until url end
       host, host_pos = M._make(p, 1, plen)
@@ -407,48 +407,22 @@ M.parse = function(url)
           path_pos = path_obj.path_pos,
         }
       else
-      end
+        -- port not found, treat as path, either absolute/relative
 
-      local first_colon_pos = M._find(url, ":")
-      if type(first_colon_pos) == "number" and first_colon_pos > 1 then
-        -- host end with ':'
-        host, host_pos = M._make(url, 1, first_colon_pos - 1)
+        local path_obj = M._make_path(url)
+        return {
+          -- no protocol
+          -- no user
+          -- no host
 
-        local last_slash_pos = M._rfind(url, "/")
-        if
-          type(last_slash_pos) == "number"
-          and last_slash_pos > first_colon_pos + 1
-        then
-          repo, repo_pos = M._make(url, last_slash_pos + 1, string.len(url))
-          org, org_pos = M._make(url, first_colon_pos + 1, last_slash_pos - 1)
-          path, path_pos = M._make(url, first_colon_pos + 1, string.len(url))
-        else
-          repo, repo_pos = M._make(url, first_colon_pos + 1, string.len(url))
-          path, path_pos = M._make(url, first_colon_pos + 1, string.len(url))
-          -- missing org
-        end
-      else
-        local first_slash_pos = M._find(url, "/")
-        if type(first_slash_pos) == "number" and first_slash_pos > 1 then
-          -- host end with '/'
-          host, host_pos = M._make(url, 1, first_slash_pos - 1)
-
-          local last_slash_pos = M._rfind(url, "/")
-          if
-            type(last_slash_pos) == "number"
-            and last_slash_pos > first_colon_pos + 1
-          then
-            repo, repo_pos = M._make(url, last_slash_pos + 1, string.len(url))
-            org, org_pos = M._make(url, first_colon_pos + 1, last_slash_pos - 1)
-            path, path_pos = M._make(url, first_colon_pos + 1, string.len(url))
-          else
-            repo, repo_pos = M._make(url, first_colon_pos + 1, string.len(url))
-            path, path_pos = M._make(url, first_colon_pos + 1, string.len(url))
-            -- missing org
-          end
-        else
-          return nil, "invalid url"
-        end
+          -- path
+          org = path_obj.org,
+          org_pos = path_obj.org_pos,
+          repo = path_obj.repo,
+          repo_pos = path_obj.repo_pos,
+          path = path_obj.path,
+          path_pos = path_obj.path_pos,
+        }
       end
     end
   end
