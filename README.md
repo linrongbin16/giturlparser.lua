@@ -40,6 +40,27 @@ Pure Lua implemented git URL parsing library, e.g. the output of <code>git remot
 
 ## Documents
 
+The git url syntax is:
+
+1. `{protocol}://host[:{port}]/{repo}`
+2. `{protocol}://host[:{port}]/[{org}]+{repo}`
+3. `{protocol}://{user}@host[:{port}]/[{org}]*{repo}`
+4. `{protocol}://{user}:{password}@host[:{port}]/[{org}]*{repo}`
+5. `{user}[:{password}]@host[:{port}]/[{org}]*{repo}`
+6. `/[{org}/]*{repo}`
+7. `~[/{org}]*/{repo}`
+
+> [!NOTE]
+>
+> 1. The `{}` contains parsed components returned from [`giturlparser.GitUrlInfo`](#giturlparsergiturlinfo).
+> 2. The `[]` contains optional (0 or 1) component.
+> 3. The `[]*` contains zero or more (&ge; 0) component.
+> 4. The `[]+` contains 1 or more (&ge; 1) component.
+
+All of above can be written by:
+
+`[[{protocol}://][{user}[:{password}]@]host[:{port}]]/[{org}]*{repo}`
+
 ### Types
 
 #### `giturlparser.GitUrlPos`

@@ -154,6 +154,18 @@ M.parse = function(url)
   then
     -- https, ssh, file, sftp, etc
     protocol, protocol_pos = M._make(url, 1, protocol_delimiter_pos - 1)
+
+    -- first @, end pos of user and password
+    local first_at_pos = M._find(url, "@", protocol_delimiter_pos + 3)
+    if
+      type(first_at_pos) == "number"
+      and first_at_pos > protocol_delimiter_pos + 3
+    then
+      -- user and password ends at @
+    else
+      -- user and password not found
+    end
+
     local first_colon_pos = M._find(url, ":", protocol_delimiter_pos + 3)
     if
       type(first_colon_pos) == "number"
