@@ -17,6 +17,10 @@ Pure Lua implemented git URL parsing library, e.g. the output of <code>git remot
 - [Requirements](#requirements)
 - [Features](#features)
 - [Install](#install)
+- [Patterns](#patterns)
+  - [Full Pattern](#full-pattern)
+  - [Protocol Omitted Pattern](#protocol-omitted-pattern)
+  - [Local Pattern](#local-pattern)
 - [API](#api)
   - [Types](#types)
     - [`giturlparser.GitUrlPos`](#giturlparsergiturlpos)
@@ -37,9 +41,19 @@ Single file & zero dependency.
 
 Full [Git Protocols](https://git-scm.com/book/en/v2/Git-on-the-Server-The-Protocols) support (see below).
 
+## Install
+
+```bash
+luarocks install giturlparser
+```
+
+## Patterns
+
+Below url patterns been supported:
+
 > [!NOTE]
 >
-> Below pattern are (just easier to help explain the parsing algorithm) written in a regex-like syntax:
+> These patterns are (just easier to help explain the parsing algorithm) written with a regex-like syntax:
 >
 > 1. The `{}` contains parsed components returned from [`giturlparser.GitUrlInfo`](#giturlparsergiturlinfo).
 > 2. The `[]` contains optional (0 or 1) component.
@@ -81,10 +95,6 @@ For example:
 - `../path/to/the/repo.git`
 - `~/home/to/the/repo.git`
 - `/usr/home/to/the/repo.git`
-
-## Install
-
-`luarocks install giturlparser`
 
 ## API
 
