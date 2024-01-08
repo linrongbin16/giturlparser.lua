@@ -1,3 +1,5 @@
+<!-- markdownlint-disable MD001 MD013 MD034 MD033 MD051 -->
+
 # giturlparser.lua
 
 <p align="center">
@@ -10,20 +12,69 @@
 Pure Lua implemented git URL parsing library, e.g. the output of <code>git remote get-url origin</code>.
 </p>
 
+## Table of Contents
+
+- [Requirements](#requirements)
+- [Features](#features)
+- [Install](#install)
+- [API](#api)
+  - [Types](#types)
+    - [`giturlparser.GitUrlPos`](#giturlparsergiturlpos)
+    - [`giturlparser.GitUrlInfo`](#giturlparsergiturlinfo)
+  - [Functions](#functions)
+    - [`parse`](#parse)
+- [References](#references)
+- [Development](#development)
+- [Contribute](#contribute)
+
 ## Requirements
 
 - Lua >= 5.1, luajit >= 2.0.0.
 
 ## Features
 
-- [x] Single file & zero dependency.
-- [x] Full [Git Protocols](https://git-scm.com/book/en/v2/Git-on-the-Server-The-Protocols) support.
+Single file & zero dependency.
+
+Full [Git Protocols](https://git-scm.com/book/en/v2/Git-on-the-Server-The-Protocols) support:
+
+> [!NOTE]
+>
+> Below pattern are (just easier to help explain the parsing algorithm) written in a regex-like syntax:
+>
+> 1. The `{}` contains parsed components returned from [`giturlparser.GitUrlInfo`](#giturlparsergiturlinfo).
+> 2. The `[]` contains optional (0 or 1) component.
+> 3. The `[]*` contains zero or more (&ge; 0) component.
+> 4. The `[]+` contains 1 or more (&ge; 1) component.
+> 5. The `|` inside `[]` is **_or_** operator.
+
+1. `{protocol}://[[{user}[:{password}]@]{host}[:{port}]]/[{org}/]*{repo}`, for example:
+   - `http://host.xyz/repo.git`
+   - `https://git@127.0.0.1:12345/repo.git`
+   - `ssh://username:password@host.xyz:port/path/to/the/repo.git`
+   - `ssh://host.xyz:port/path/to/the/repo.git`
+   - `file:///repo.git`
+   - `file://user:passwd@host.xyz:port/path/to/the/repo.git`
+   - `file://~/home/to/the/repo.git`
+2. `[{user}[:{password}]@]{host}:[{org}/]*{repo}`, for example:
+   - `git@host.xyz:repo.git`
+   - `user:passwd@host.xyz:path/to/the/repo.git`
+3. `[.|..|~][/{org}]*/{repo}`, for example:
+   - `repo.git`
+   - `./repo.git`
+   - `../path/to/the/repo.git`
+   - `~/home/to/the/repo.git`
+   - `/usr/home/to/the/repo.git`
+
+All of above can be written by:
+
+1. `[{protocol}://][[{user}[:{password}]@]host[:{port}]]/[{org}/]*{repo}`
+2. `[.|..|~][/{org}]*/{repo}`
 
 ## Install
 
 `luarocks install giturlparser`
 
-## Documents
+## API
 
 ### Types
 
@@ -50,28 +101,23 @@ Parsed information.
 
 It contains below fields:
 
-- `protocol`: Protocol, e.g. `http` (`http://`), `https` (`https://`), `ssh` (`ssh://`), `file` (`file://`).
-- `protocol_pos`: Protocol position.
-- `user`: User name, e.g. `username` in `ssh://username@githost.com`.
-- `user_pos`: User name position.
-- `password`: Password, e.g. `password` in `ssh://username:password@githost.com`.
-- `password_pos`: Password position.
-- `host`: Host name, e.g. `githost.com` in `ssh://githost.com`.
-- `host_pos`: Host name position.
-- `path`: All the left parts after `host/`, e.g. `linrongbin16/giturlparser.lua.git` in `https://github.com/linrongbin16/giturlparser.lua.git`.
-- `path_pos`: Path position.
-- `repo`: Repository (the left parts after the last slash `/`, if exists), e.g. `giturlparser.lua.git` in `https://github.com/linrongbin16/giturlparser.lua.git`.
-- `repo_pos`: Repository position.
-- `org`: , Organization (the parts after `host/` and before the last slash `/`, if exists), e.g. `linrongbin16` in `https://github.com/linrongbin16/giturlparser.lua.git`.
-- `org_pos`: Organization position.
+- `protocol`/`protocol_pos`: Protocol, e.g. `http` in `http://github.com`, and its position.
+- `user`/`user_pos`: User name, e.g. `username` in `ssh://username@githost.com`, and its position.
+- `password`/`password_pos`: Password, e.g. `password` in `ssh://username:password@githost.com`, and its position.
+- `host`/`host_pos`: Host name, e.g. `githost.com` in `ssh://githost.com`, and its position.
+- `port`/`port_pos`: Port, e.g. `12345` in `ssh://127.0.0.1:12345/org/repo.git`, and its position.
+- `path`/`path_pos`: All the left parts after host name (and optional port), e.g. `/linrongbin16/giturlparser.lua.git` in `https://github.com/linrongbin16/giturlparser.lua.git`, and its position.
+
+There're 2 more sugar fields:
+
+- `repo`/`repo_pos`: Repository (the last part after the last slash `/`), e.g. `giturlparser.lua.git` in `https://github.com/linrongbin16/giturlparser.lua.git`, and its position.
+- `org`/`org_pos`: , Organization (the parts after host name (and optional port), before the last slash `/`), e.g. `linrongbin16` in `https://github.com/linrongbin16/giturlparser.lua.git`, and its position.
 
 > [!NOTE]
 >
-> The `{path}` component is equivalent to `{org}/{repo}`.
-
-> [!IMPORTANT]
->
-> If there's only 1 slash, the `org` component is omitted.
+> - The `{path}` component is (almost) equivalent to `/{org}/{repo}`.
+> - The `{org}` and `{repo}` component are trimmed from around slashes if there's any.
+> - If there's only 1 slash, the `org` component is omitted.
 
 ### Functions
 

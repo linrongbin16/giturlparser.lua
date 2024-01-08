@@ -11,6 +11,9 @@ description = {
 dependencies = {
   "lua >= 5.1, luajit >= 2.0.0",
 }
+test_dependencies = {
+  "inspect",
+}
 build = {
   type = "builtin",
   modules = {
