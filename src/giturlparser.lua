@@ -183,8 +183,14 @@ M.parse = function(url)
         user, user_pos =
           M._make(url, protocol_delimiter_pos + 3, first_at_pos - 1)
       end
+
+      -- find second ':' (after '@'), the end position of host, start position of port
+      local second_colon_pos = M._find(url, ":", first_at_pos + 1)
     else
       -- user (and password) not found
+
+      -- find first ':', the end position of host, start position of port
+      local first_colon_pos = M._find(url, ":", first_at_pos + 1)
     end
 
     local first_colon_pos = M._find(url, ":", protocol_delimiter_pos + 3)
