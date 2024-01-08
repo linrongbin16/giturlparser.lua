@@ -37,9 +37,8 @@ Pure Lua implemented git URL parsing library, e.g. the output of <code>git remot
 
 ## Features
 
-Single file & zero dependency.
-
-Full [Git Protocols](https://git-scm.com/book/en/v2/Git-on-the-Server-The-Protocols) support (see below).
+* Single file & zero dependency.
+* Full [Git Protocols](https://git-scm.com/book/en/v2/Git-on-the-Server-The-Protocols) support (see [Patterns](#patterns)).
 
 ## Install
 
