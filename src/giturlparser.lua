@@ -107,8 +107,7 @@ end
 --
 --- @alias giturlparser.GitUrlPos {start_pos:integer?,end_pos:integer?}
 --- @alias giturlparser.GitUrlInfo {protocol:string?,protocol_pos:giturlparser.GitUrlPos?,user:string?,user_pos:giturlparser.GitUrlPos?,password:string?,password_pos:giturlparser.GitUrlPos?,host:string?,host_pos:giturlparser.GitUrlPos?,org:string?,org_pos:giturlparser.GitUrlPos?,repo:string,repo_pos:giturlparser.GitUrlPos,path:string,path_pos:giturlparser.GitUrlPos}
-local GitUrlInfo = {}
-
+--
 --- @param url string
 --- @param start_pos integer
 --- @param end_pos integer
