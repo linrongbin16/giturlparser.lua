@@ -222,6 +222,63 @@ M._make_host = function(p)
   }
 end
 
+--- @alias giturlparser._GitUrlUser {user:string?,user_pos:giturlparser.GitUrlPos?,password:string?,password_pos:giturlparser.GitUrlPos?,host_obj:giturlparser._GitUrlHost}
+--
+--- @param p string
+--- @return giturlparser._GitUrlUser
+M._make_user = function(p)
+  assert(not M._startswith(p, "/"))
+  assert(not M._endswith(p, "/"))
+
+  local user = nil
+  local user_pos = nil
+  local password = nil
+  local password_pos = nil
+  --- @type giturlparser._GitUrlHost
+  local host_obj = {}
+
+  local plen = string.len(p)
+
+  local host_start_pos = 1
+
+  -- find first '@', the end position of user and password
+  local first_at_pos = M._find(p, "@")
+  if type(first_at_pos) == "number" and first_at_pos > 1 then
+    -- user (and password) end with '@'
+
+    -- find first ':' (before '@'), the end position of password
+    local first_colon_pos = M._find(p, ":")
+    if
+      type(first_colon_pos) == "number"
+      and first_colon_pos > 1
+      and first_colon_pos < first_at_pos
+    then
+      -- password end with ':'
+      user, user_pos = M._make(p, 1, first_colon_pos - 1)
+      password, password_pos = M._make(p, first_colon_pos + 1, first_at_pos - 1)
+    else
+      -- password not found, user end with '@'
+      user, user_pos = M._make(p, 1, first_at_pos - 1)
+    end
+
+    -- host start from '@', user (and password) end position
+    host_start_pos = first_at_pos + 1
+  else
+    -- user (and password) not found
+    -- host start from beginning
+  end
+
+  host_obj = M._make_host(string.sub(p, host_start_pos))
+
+  return {
+    user = user,
+    user_pos = user_pos,
+    password = password,
+    password_pos = password_pos,
+    host_obj = host_obj,
+  }
+end
+
 --- @param url string
 --- @return giturlparser.GitUrlInfo?, string?
 M.parse = function(url)
@@ -260,178 +317,98 @@ M.parse = function(url)
     -- protocol end with '://'
     protocol, protocol_pos = M._make(url, 1, protocol_delimiter_pos - 1)
 
-    local host_start_pos = protocol_delimiter_pos + 3
+    local user_obj = M._make_user(string.sub(url, protocol_delimiter_pos + 3))
+    local host_obj = user_obj.host_obj
+    local path_obj = host_obj.path_obj
 
-    -- find first '@', the end position of user and password
-    local first_at_pos = M._find(url, "@", protocol_delimiter_pos + 3)
-    if
-      type(first_at_pos) == "number"
-      and first_at_pos > protocol_delimiter_pos + 3
-    then
-      -- user (and password) end with '@'
+    return {
+      protocol = protocol,
+      protocol_pos = protocol_pos,
 
-      -- find first ':', the end position of password
-      local first_colon_pos = M._find(url, ":", protocol_delimiter_pos + 3)
-      if
-        type(first_colon_pos) == "number"
-        and first_colon_pos > protocol_delimiter_pos + 3
-        and first_colon_pos < first_at_pos
-      then
-        -- password end with ':'
-        user, user_pos =
-          M._make(url, protocol_delimiter_pos + 3, first_colon_pos - 1)
-        password, password_pos =
-          M._make(url, first_colon_pos + 1, first_at_pos - 1)
-      else
-        -- password not found, user end with '@'
-        user, user_pos =
-          M._make(url, protocol_delimiter_pos + 3, first_at_pos - 1)
-      end
+      -- user
+      user = user_obj.user,
+      user_pos = user_obj.user_pos,
+      password = user_obj.password,
+      password_pos = user_obj.password_pos,
 
-      -- host start from '@', user (and password) end position
-      host_start_pos = first_at_pos + 1
-    else
-      -- user (and password) not found
-      -- host start from '://'
-    end
+      -- host
+      host = host_obj.host,
+      host_pos = host_obj.host_pos,
+      port = host_obj.port,
+      port_pos = host_obj.port_pos,
 
-    local host_obj = M._make_host(string.sub(url, host_start_pos))
-    host = host_obj.host
-    host_pos = host_obj.host_pos
-    port = host_obj.port
-    port_pos = host_obj.port_pos
-    org = host_obj.path_obj.org
-    org_pos = host_obj.path_obj.org_pos
-    repo = host_obj.path_obj.repo
-    repo_pos = host_obj.path_obj.repo_pos
-    path = host_obj.path_obj.path
-    path_pos = host_obj.path_obj.path_pos
+      -- path
+      org = path_obj.org,
+      org_pos = path_obj.org_pos,
+      repo = path_obj.repo,
+      repo_pos = path_obj.repo_pos,
+      path = path_obj.path,
+      path_pos = path_obj.path_pos,
+    }
   else
-    -- missing protocol, either ssh/local file path
+    -- protocol not found, either ssh/local file path
+
+    -- find first '@', user (and password) end position
     local first_at_pos = M._find(url, "@")
     if type(first_at_pos) == "number" and first_at_pos > 1 then
-      local first_colon_pos = M._find(url, ":")
-      if
-        type(first_colon_pos) == "number"
-        and first_colon_pos > 1
-        and first_colon_pos < first_at_pos
-      then
-        -- user end with ':', password end with '@'
-        user, user_pos = M._make(url, 1, first_colon_pos - 1)
-        password, password_pos =
-          M._make(url, first_colon_pos + 1, first_at_pos - 1)
+      local user_obj = M._make_user(url)
+      local host_obj = user_obj.host_obj
+      local path_obj = host_obj.path_obj
 
-        local second_colon_pos = M._find(url, ":", first_at_pos + 1)
-        if
-          type(second_colon_pos) == "number"
-          and second_colon_pos > first_at_pos + 1
-        then
-          -- host end with ':'
-          host, host_pos = M._make(url, first_at_pos + 1, second_colon_pos - 1)
+      return {
+        -- no protocol
 
-          local last_slash_pos = M._rfind(url, "/")
-          if
-            type(last_slash_pos) == "number"
-            and last_slash_pos > second_colon_pos + 1
-          then
-            repo, repo_pos = M._make(url, last_slash_pos + 1, string.len(url))
-            org, org_pos =
-              M._make(url, second_colon_pos + 1, last_slash_pos - 1)
-            path, path_pos = M._make(url, second_colon_pos + 1, string.len(url))
-          else
-            repo, repo_pos = M._make(url, second_colon_pos + 1, string.len(url))
-            path, path_pos = M._make(url, second_colon_pos + 1, string.len(url))
-            -- missing org
-          end
-        else
-          local first_slash_pos = M._find(url, "/", first_at_pos + 1)
-          if
-            type(first_slash_pos) == "number"
-            and first_slash_pos > first_at_pos + 1
-          then
-            -- host end with '/'
-            host, host_pos = M._make(url, first_at_pos + 1, first_slash_pos - 1)
+        -- user
+        user = user_obj.user,
+        user_pos = user_obj.user_pos,
+        password = user_obj.password,
+        password_pos = user_obj.password_pos,
 
-            local last_slash_pos = M._rfind(url, "/")
-            if
-              type(last_slash_pos) == "number"
-              and last_slash_pos > first_slash_pos + 1
-            then
-              repo, repo_pos = M._make(url, last_slash_pos + 1, string.len(url))
-              org, org_pos =
-                M._make(url, first_slash_pos + 1, last_slash_pos - 1)
-              path, path_pos =
-                M._make(url, first_slash_pos + 1, string.len(url))
-            else
-              repo, repo_pos =
-                M._make(url, first_slash_pos + 1, string.len(url))
-              path, path_pos =
-                M._make(url, first_slash_pos + 1, string.len(url))
-              -- missing org
-            end
-          else
-            return nil, "invalid url"
-          end
-        end
-      else
-        -- user end with '@'
-        user, user_pos = M._make(url, 1, first_at_pos - 1)
-        -- missing password
+        -- host
+        host = host_obj.host,
+        host_pos = host_obj.host_pos,
+        port = host_obj.port,
+        port_pos = host_obj.port_pos,
 
-        local second_colon_pos = M._find(url, ":", first_at_pos + 1)
-        if
-          type(second_colon_pos) == "number"
-          and second_colon_pos > first_at_pos + 1
-        then
-          -- host end with ':'
-          host, host_pos = M._make(url, first_at_pos + 1, second_colon_pos - 1)
-
-          local last_slash_pos = M._rfind(url, "/")
-          if
-            type(last_slash_pos) == "number"
-            and last_slash_pos > second_colon_pos + 1
-          then
-            repo, repo_pos = M._make(url, last_slash_pos + 1, string.len(url))
-            org, org_pos =
-              M._make(url, second_colon_pos + 1, last_slash_pos - 1)
-            path, path_pos = M._make(url, second_colon_pos + 1, string.len(url))
-          else
-            repo, repo_pos = M._make(url, second_colon_pos + 1, string.len(url))
-            path, path_pos = M._make(url, second_colon_pos + 1, string.len(url))
-            -- missing org
-          end
-        else
-          local first_slash_pos = M._find(url, "/", first_at_pos + 1)
-          if
-            type(first_slash_pos) == "number"
-            and first_slash_pos > first_at_pos + 1
-          then
-            -- host end with '/'
-            host, host_pos = M._make(url, first_at_pos + 1, first_slash_pos - 1)
-
-            local last_slash_pos = M._rfind(url, "/")
-            if
-              type(last_slash_pos) == "number"
-              and last_slash_pos > first_slash_pos + 1
-            then
-              repo, repo_pos = M._make(url, last_slash_pos + 1, string.len(url))
-              org, org_pos =
-                M._make(url, first_slash_pos + 1, last_slash_pos - 1)
-              path, path_pos =
-                M._make(url, first_slash_pos + 1, string.len(url))
-            else
-              repo, repo_pos =
-                M._make(url, first_slash_pos + 1, string.len(url))
-              path, path_pos =
-                M._make(url, first_slash_pos + 1, string.len(url))
-              -- missing org
-            end
-          else
-            return nil, "invalid url"
-          end
-        end
-      end
+        -- path
+        org = path_obj.org,
+        org_pos = path_obj.org_pos,
+        repo = path_obj.repo,
+        repo_pos = path_obj.repo_pos,
+        path = path_obj.path,
+        path_pos = path_obj.path_pos,
+      }
     else
+      -- user not found
+
+      -- find first ':', host end position, port start position
+      local first_colon_pos = M._find(url, ":")
+      if type(first_colon_pos) == "number" and first_colon_pos > 1 then
+        -- host end with ':', port start with ':'
+
+        local host_obj = M._make_host(url)
+        local path_obj = host_obj.path_obj
+        return {
+          -- no protocol
+          -- no user
+
+          -- host
+          host = host_obj.host,
+          host_pos = host_obj.host_pos,
+          port = host_obj.port,
+          port_pos = host_obj.port_pos,
+
+          -- path
+          org = path_obj.org,
+          org_pos = path_obj.org_pos,
+          repo = path_obj.repo,
+          repo_pos = path_obj.repo_pos,
+          path = path_obj.path,
+          path_pos = path_obj.path_pos,
+        }
+      else
+      end
+
       local first_colon_pos = M._find(url, ":")
       if type(first_colon_pos) == "number" and first_colon_pos > 1 then
         -- host end with ':'
