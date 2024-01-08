@@ -40,15 +40,27 @@ Pure Lua implemented git URL parsing library, e.g. the output of <code>git remot
 
 ## Documents
 
-The git url syntax is:
+The git url syntax contains many use cases:
 
-1. `{protocol}://host[:{port}]/{repo}`
-2. `{protocol}://host[:{port}]/[{org}]+{repo}`
-3. `{protocol}://{user}@host[:{port}]/[{org}]*{repo}`
-4. `{protocol}://{user}:{password}@host[:{port}]/[{org}]*{repo}`
-5. `{user}[:{password}]@host[:{port}]/[{org}]*{repo}`
-6. `/[{org}/]*{repo}`
-7. `~[/{org}]*/{repo}`
+1. `{protocol}://host[:{port}]/[{org}/]*{repo}`
+   - `http://host.xyz/repo.git`
+   - `ssh://host.xyz:port/path/to/the/repo.git`
+2. `{protocol}://[{user}[:{password}]@]host[:{port}]/[{org}/]*{repo}`
+   - `https://git@host.xyz/repo.git`
+   - `ssh://username:password@host.xyz:port/path/to/the/repo.git`
+3. `{protocol}://[[{user}[:{password}]@]host[:{port}]]/[{org}/]*{repo}`
+   - `file:///repo.git`
+   - `file://user:passwd@host.xyz:port/repo.git`
+   - `file://~/home/to/the/repo.git`
+4. `[{protocol}://][[{user}[:{password}]@]host[:{port}]]/[{org}/]*{repo}`
+   - `git@host.xyz/repo.git`
+   - `user:passwd@host.xyz:port/path/to/the/repo.git`
+5. `[~][/{org}]*/{repo}`
+   - `repo.git`
+   - `./repo.git`
+   - `../path/to/the/repo.git`
+   - `~/home/to/the/repo.git`
+   - `/usr/home/to/the/repo.git`
 
 > [!NOTE]
 >
@@ -56,10 +68,12 @@ The git url syntax is:
 > 2. The `[]` contains optional (0 or 1) component.
 > 3. The `[]*` contains zero or more (&ge; 0) component.
 > 4. The `[]+` contains 1 or more (&ge; 1) component.
+> 5. The `|` inside `[]` is **_or_** operator.
 
 All of above can be written by:
 
-`[[{protocol}://][{user}[:{password}]@]host[:{port}]]/[{org}]*{repo}`
+1. `[{protocol}://][[{user}[:{password}]@]host[:{port}]]/[{org}/]*{repo}`
+2. `[~][/{org}]*/{repo}`
 
 ### Types
 
