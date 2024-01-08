@@ -10,6 +10,21 @@
 Pure Lua implemented git URL parsing library, e.g. the output of <code>git remote get-url origin</code>.
 </p>
 
+## Table of Contents
+
+- [Requirements](#requirements)
+- [Features](#features)
+- [Install](#install)
+- [Documents](#documents)
+  - [Types](#types)
+    - [`giturlparser.GitUrlPos`](#giturlparsergiturlpos)
+    - [`giturlparser.GitUrlInfo`](#giturlparsergiturlinfo)
+  - [Functions](#functions)
+    - [`parse`](#parse)
+- [References](#references)
+- [Development](#development)
+- [Contribute](#contribute)
+
 ## Requirements
 
 - Lua >= 5.1, luajit >= 2.0.0.
