@@ -37,7 +37,7 @@ Full [Git Protocols](https://git-scm.com/book/en/v2/Git-on-the-Server-The-Protoc
 
 > [!NOTE]
 >
-> Below code snippets are (just easier to help explain the parsing algorithm) written in a regex-like syntax:
+> Below pattern are (just easier to help explain the parsing algorithm) written in a regex-like syntax:
 >
 > 1. The `{}` contains parsed components returned from [`giturlparser.GitUrlInfo`](#giturlparsergiturlinfo).
 > 2. The `[]` contains optional (0 or 1) component.
