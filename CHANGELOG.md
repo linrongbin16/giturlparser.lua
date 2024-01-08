@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.7](https://github.com/linrongbin16/giturlparser.lua/compare/v1.0.6...v1.0.7) (2024-01-08)
+
+
+### Bug Fixes
+
+* **parse:** fix parse ([#28](https://github.com/linrongbin16/giturlparser.lua/issues/28)) ([454d7c3](https://github.com/linrongbin16/giturlparser.lua/commit/454d7c3094669641c5e5dcc3060947f2364e7634))
+
 ## [1.0.6](https://github.com/linrongbin16/giturlparser.lua/compare/v1.0.5...v1.0.6) (2024-01-07)
 
 
