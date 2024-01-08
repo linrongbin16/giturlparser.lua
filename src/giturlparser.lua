@@ -266,7 +266,28 @@ M.parse = function(url)
       -- user (and password) not found
 
       -- find first ':', the end position of host, start position of port
-      local first_colon_pos = M._find(url, ":", first_at_pos + 1)
+      local first_colon_pos = M._find(url, ":", protocol_delimiter_pos + 3)
+      if
+        type(first_colon_pos) == "number"
+        and first_colon_pos > protocol_delimiter_pos + 3
+      then
+        -- host end with ':', port start with ':'
+        host, host_pos =
+          M._make(url, protocol_delimiter_pos + 3, first_colon_pos - 1)
+
+        -- find first '/', the end position of port, start position of path
+        local first_slash_pos = M._find(url, "/", first_colon_pos + 1)
+        if
+          type(first_slash_pos) == "number"
+          and first_slash_pos > first_colon_pos + 1
+        then
+          -- port end with '/'
+          port, port_pos =
+            M._make(url, first_colon_pos + 1, first_slash_pos - 1)
+        else
+        end
+      else
+      end
     end
   else
     -- missing protocol, either ssh/local file path
