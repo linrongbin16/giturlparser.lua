@@ -256,7 +256,7 @@ end
 --- @param p string
 --- @param start integer
 --- @return giturlparser._GitUrlHost
-M._make_host_with_omitted_ssh = function(p, start)
+M._make_host_with_omit_ssh = function(p, start)
   assert(type(start) == "number")
   assert(not M._startswith(p, "/"))
   assert(not M._endswith(p, "/"))
@@ -275,9 +275,9 @@ M._make_host_with_omitted_ssh = function(p, start)
   if type(first_colon_pos) == "number" and first_colon_pos > start then
     -- host end with ':', path start with ':'
     host, host_pos = M._make(p, 1, first_colon_pos - 1)
-    path_obj = M._make_path(p, first_colon_pos)
+    path_obj = M._make_path(p, first_colon_pos + 1)
   else
-    -- host not found, path start with '/'
+    -- host not found, path start from beginning
     path_obj = M._make_path(p, start)
   end
 
@@ -342,7 +342,7 @@ M._make_user = function(p, start, ssh_protocol_omitted)
   end
 
   host_obj = ssh_protocol_omitted
-      and M._make_host_with_omitted_ssh(p, host_start_pos)
+      and M._make_host_with_omit_ssh(p, host_start_pos)
     or M._make_host(p, host_start_pos)
 
   return {
