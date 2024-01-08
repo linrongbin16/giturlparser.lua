@@ -115,7 +115,8 @@ There're 2 more sugar fields:
 
 > [!NOTE]
 >
-> The `{path}` component is equivalent to `{org}/{repo}`.
+> - The `{path}` component is (almost) equivalent to `/{org}/{repo}`.
+> - The `{org}` and `{repo}` component are trimmed from around slashes if there's any.
 
 > [!IMPORTANT]
 >
