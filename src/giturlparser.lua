@@ -192,6 +192,14 @@ M.parse = function(url)
             -- missing org, org_pos
           end
         else
+          print(
+            string.format(
+              "second colon ':'(%s) is after at '@'(%s), url:%s\n",
+              tostring(second_colon_pos),
+              tostring(first_at_pos),
+              tostring(url)
+            )
+          )
           local first_slash_pos = M._find(url, "/", first_at_pos + 1)
           if
             type(first_slash_pos) == "number"
