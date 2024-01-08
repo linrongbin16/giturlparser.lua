@@ -259,7 +259,6 @@ end
 M._make_host_with_omit_ssh = function(p, start)
   assert(type(start) == "number")
   assert(not M._startswith(p, "/"))
-  assert(not M._endswith(p, "/"))
 
   local host = nil
   local host_pos = nil
