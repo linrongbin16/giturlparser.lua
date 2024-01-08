@@ -5,7 +5,7 @@ describe("giturlparser", function()
 
   before_each(function() end)
 
-  local inspect = require("inspect")
+  -- local inspect = require("inspect")
   local giturlparser = require("giturlparser")
   describe("[_make_path]", function()
     it("repo.git", function()
