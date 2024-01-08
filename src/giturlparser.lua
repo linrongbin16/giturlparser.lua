@@ -106,7 +106,7 @@ end
 -- 'path' is all payload after 'host', e.g. 'org/repo'.
 --
 --- @alias giturlparser.GitUrlPos {start_pos:integer?,end_pos:integer?}
---- @alias giturlparser.GitUrlInfo {protocol:string?,protocol_pos:giturlparser.GitUrlPos?,user:string?,user_pos:giturlparser.GitUrlPos?,password:string?,password_pos:giturlparser.GitUrlPos?,host:string?,host_pos:giturlparser.GitUrlPos?,org:string?,org_pos:giturlparser.GitUrlPos?,repo:string,repo_pos:giturlparser.GitUrlPos,path:string,path_pos:giturlparser.GitUrlPos}
+--- @alias giturlparser.GitUrlInfo {protocol:string?,protocol_pos:giturlparser.GitUrlPos?,user:string?,user_pos:giturlparser.GitUrlPos?,password:string?,password_pos:giturlparser.GitUrlPos?,host:string?,host_pos:giturlparser.GitUrlPos?,port:string?,port_pos:giturlparser.GitUrlPos?,org:string?,org_pos:giturlparser.GitUrlPos?,repo:string,repo_pos:giturlparser.GitUrlPos,path:string,path_pos:giturlparser.GitUrlPos}
 --
 --- @param url string
 --- @param start_pos integer
@@ -141,6 +141,8 @@ M.parse = function(url)
   local password_pos = nil
   local host = nil
   local host_pos = nil
+  local port = nil
+  local port_pos = nil
   local org = nil
   local org_pos = nil
   local repo = nil
@@ -148,22 +150,41 @@ M.parse = function(url)
   local path = nil
   local path_pos = nil
 
+  -- find first '://', the end position of protocol
   local protocol_delimiter_pos = M._find(url, "://")
   if
     type(protocol_delimiter_pos) == "number" and protocol_delimiter_pos > 1
   then
-    -- https, ssh, file, sftp, etc
+    -- protocol end with '://'
     protocol, protocol_pos = M._make(url, 1, protocol_delimiter_pos - 1)
 
-    -- first @, end pos of user and password
+    -- find first '@', the end position of user and password
     local first_at_pos = M._find(url, "@", protocol_delimiter_pos + 3)
     if
       type(first_at_pos) == "number"
       and first_at_pos > protocol_delimiter_pos + 3
     then
-      -- user and password ends at @
+      -- user (and password) end with '@'
+
+      -- find first ':', the end position of password
+      local first_colon_pos = M._find(url, ":", protocol_delimiter_pos + 3)
+      if
+        type(first_colon_pos) == "number"
+        and first_colon_pos > protocol_delimiter_pos + 3
+        and first_colon_pos < first_at_pos
+      then
+        -- password end with ':'
+        user, user_pos =
+          M._make(url, protocol_delimiter_pos + 3, first_colon_pos - 1)
+        password, password_pos =
+          M._make(url, first_colon_pos + 1, first_at_pos - 1)
+      else
+        -- password not found, user end with '@'
+        user, user_pos =
+          M._make(url, protocol_delimiter_pos + 3, first_at_pos - 1)
+      end
     else
-      -- user and password not found
+      -- user (and password) not found
     end
 
     local first_colon_pos = M._find(url, ":", protocol_delimiter_pos + 3)
