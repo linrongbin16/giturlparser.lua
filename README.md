@@ -48,11 +48,11 @@ luarocks install giturlparser
 
 ## Patterns
 
-Below url patterns been supported:
+Below url patterns are supported:
 
 > [!NOTE]
 >
-> These patterns are (just easier to help explain the parsing algorithm) written with a regex-like syntax:
+> They are (just help to explain) written with a regex-like syntax:
 >
 > 1. The `{}` contains parsed components returned from [`giturlparser.GitUrlInfo`](#giturlparsergiturlinfo).
 > 2. The `[]` contains optional (0 or 1) component.
