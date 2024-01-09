@@ -48,7 +48,7 @@ luarocks install giturlparser
 
 ## Patterns
 
-Below url patterns are supported:
+There are (mainly) three types of git url pattern:
 
 > [!NOTE]
 >
