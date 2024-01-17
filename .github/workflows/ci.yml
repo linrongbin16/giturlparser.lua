@@ -10,8 +10,8 @@ concurrency:
   group: ${{ github.ref }}-ci
   cancel-in-progress: true
 jobs:
-  pr_conventional_commit:
-    name: Conventional Commit
+  conventional_commit:
+    name: Conventional Commits
     if: ${{ github.ref != 'refs/heads/main' }}
     runs-on: ubuntu-latest
     steps:
@@ -62,13 +62,28 @@ jobs:
           echo $PWD
           echo 'ls-1'
           ls -lha
+          luarocks install busted
+          busted .
+  code_coverage:
+    name: Code Coverage
+    needs:
+      - luacheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: leafo/gh-actions-lua@v10
+        with:
+          luaVersion: "luajit"
+      - uses: leafo/gh-actions-luarocks@v4
+      - name: Run Tests
+        run: |
+          echo 'pwd'
+          echo $PWD
+          echo 'ls-1'
+          ls -lha
           luarocks install luacov
-          luarocks install cluacov
           luarocks install busted
           busted --coverage .
-      # - uses: lunarmodules/busted@v2
-      #   with:
-      #       args:  .
       - name: Generate Coverage Reports
         run: |
           echo "ls ."
@@ -89,6 +104,7 @@ jobs:
     if: ${{ github.ref == 'refs/heads/main' }}
     needs:
       - unit_test
+      - code_coverage
     runs-on: ubuntu-latest
     steps:
       - uses: google-github-actions/release-please-action@v3
@@ -110,7 +126,7 @@ jobs:
         if: ${{ steps.release.outputs.release_created }}
         run: |
           luarocks install dkjson
-          luarocks write_rockspec --lua-versions="5.1,5.2,5.3,5.4" --tag=${{ steps.release.outputs.tag_name }} --detailed="Pure Lua implemented git URL parsing library" --summary="Pure Lua implemented git URL parsing library" --license=MIT --homepage="https://github.com/linrongbin16/giturlparser.lua"
+          luarocks write_rockspec --lua-versions="5.1,5.2,5.3,5.4" --tag=${{ steps.release.outputs.tag_name }} --detailed="Git URL parsing library for Lua." --summary="Git URL parsing library for Lua." --license=MIT --homepage="https://github.com/linrongbin16/giturlparser.lua"
           echo 'ls-1'
           ls -lh
           mv giturlparser.lua-${{steps.release.outputs.major}}.${{steps.release.outputs.minor}}.${{steps.release.outputs.patch}}-1.rockspec giturlparser-${{steps.release.outputs.major}}.${{steps.release.outputs.minor}}.${{steps.release.outputs.patch}}-1.rockspec

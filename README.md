@@ -18,9 +18,9 @@ Git url parsing library for lua, e.g. the output of <code>git remote get-url ori
 - [Features](#features)
 - [Install](#install)
 - [Patterns](#patterns)
-  - [Full Pattern](#full-pattern)
-  - [Protocol Omitted Pattern](#protocol-omitted-pattern)
-  - [Local Pattern](#local-pattern)
+  - [Full Protocols](#full-protocols)
+  - [SSH Omitted Protocols](#ssh-omitted-protocols)
+  - [Local File System](#local-file-system)
 - [API](#api)
   - [Types](#types)
     - [`giturlparser.GitUrlPos`](#giturlparsergiturlpos)
@@ -60,7 +60,7 @@ There are (mainly) three types of git url pattern:
 > 4. The `[]+` contains 1 or more component.
 > 5. The `|` inside `[]` is **_or_** operator.
 
-### Full Pattern
+### Full Protocols
 
 `{protocol}://[[{user}[:{password}]@]{host}[:{port}]]/[{org}/]*{repo}`
 
@@ -74,7 +74,7 @@ For example:
 - `file://user:passwd@host.xyz:port/path/to/the/repo.git`
 - `file://~/home/to/the/repo.git`
 
-### Protocol Omitted Pattern
+### SSH Omitted Protocols
 
 `[{user}[:{password}]@]{host}:[{org}/]*{repo}`
 
@@ -83,9 +83,9 @@ For example:
 - `git@host.xyz:repo.git`
 - `user:passwd@host.xyz:path/to/the/repo.git`
 
-### Local Pattern
+### Local File System
 
-`[.|..|~][/{org}]*/{repo}`
+`[[.|..|~]/][{org}/]*{repo}`
 
 For example:
 
