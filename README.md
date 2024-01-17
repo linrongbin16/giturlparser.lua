@@ -85,7 +85,7 @@ For example:
 
 ### Local File System
 
-`[./|../|~/|/][{org}/]*{repo}`
+`[[.|..|~]/][{org}/]*{repo}`
 
 For example:
 
