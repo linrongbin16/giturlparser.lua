@@ -19,7 +19,7 @@ Git url parsing library for lua, e.g. the output of <code>git remote get-url ori
 - [Install](#install)
 - [Patterns](#patterns)
   - [Full Pattern](#full-pattern)
-  - [Protocol Omitted Pattern](#protocol-omitted-pattern)
+  - [SSH Omitted Pattern](#ssh-omitted-pattern)
   - [Local Pattern](#local-pattern)
 - [API](#api)
   - [Types](#types)
@@ -74,7 +74,7 @@ For example:
 - `file://user:passwd@host.xyz:port/path/to/the/repo.git`
 - `file://~/home/to/the/repo.git`
 
-### Protocol Omitted Pattern
+### SSH Omitted Pattern
 
 `[{user}[:{password}]@]{host}:[{org}/]*{repo}`
 
