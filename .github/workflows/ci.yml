@@ -46,7 +46,7 @@ jobs:
     name: Unit Test
     strategy:
       matrix:
-        lua_version: ["5.1", "5.2", "5.3", "luajit"]
+        lua_version: ["5.1", "5.2", "5.3", "luajit-openresty"]
     needs:
       - luacheck
     runs-on: ubuntu-latest
@@ -73,7 +73,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: leafo/gh-actions-lua@v10
         with:
-          luaVersion: "luajit"
+          luaVersion: "luajit-openresty"
       - uses: leafo/gh-actions-luarocks@v4
       - name: Run Tests
         run: |
@@ -94,7 +94,7 @@ jobs:
           ls -l .
           echo "cat ./luacov.report.out"
           cat ./luacov.report.out
-      - uses: codecov/codecov-action@v3
+      - uses: codecov/codecov-action@v4
         with:
           files: luacov.report.out
         env:
