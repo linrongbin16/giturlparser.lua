@@ -46,7 +46,7 @@ jobs:
     name: Unit Test
     strategy:
       matrix:
-        lua_version: ["5.1", "5.2", "5.3", "luajit"]
+        lua_version: ["5.1", "5.2", "5.3", "luajit-openresty"]
     needs:
       - luacheck
     runs-on: ubuntu-latest
