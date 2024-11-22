@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.8](https://github.com/linrongbin16/giturlparser.lua/compare/v1.0.7...v1.0.8) (2024-11-22)
+
+
+### Bug Fixes
+
+* **port:** fix host ends with colon but port is empty ([#36](https://github.com/linrongbin16/giturlparser.lua/issues/36)) ([a2d473a](https://github.com/linrongbin16/giturlparser.lua/commit/a2d473a129500069bcbc836d3ad572225a765a29))
+
 ## [1.0.7](https://github.com/linrongbin16/giturlparser.lua/compare/v1.0.6...v1.0.7) (2024-01-08)
 
 
