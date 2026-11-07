@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.0.9](https://github.com/linrongbin16/giturlparser.lua/compare/v1.0.8...v1.0.9) (2026-11-07)
+
+
+### Bug Fixes
+
+* handle empty user, update docs, and test Lua 5.4 ([#43](https://github.com/linrongbin16/giturlparser.lua/issues/43)) ([18a13b5](https://github.com/linrongbin16/giturlparser.lua/commit/18a13b5fac4ea2400ba28c98bfed840ebc73de4d))
+* **host:** parse host correctly when path is absent ([#38](https://github.com/linrongbin16/giturlparser.lua/issues/38)) ([05073f0](https://github.com/linrongbin16/giturlparser.lua/commit/05073f0d95a2cce900043e55e45199f5a31b137e))
+* **parse:** parse IPv6, empty-host port, and host/port boundary correctly ([#42](https://github.com/linrongbin16/giturlparser.lua/issues/42)) ([853bcab](https://github.com/linrongbin16/giturlparser.lua/commit/853bcabc88dbe091b4b264240898b0d2ee88fa69))
+* **parse:** recognize scp-like syntax only when no slash before first colon ([#39](https://github.com/linrongbin16/giturlparser.lua/issues/39)) ([b4c7f88](https://github.com/linrongbin16/giturlparser.lua/commit/b4c7f885606f7488f99e6a4fb3c49f490f452f07))
+
 ## [1.0.8](https://github.com/linrongbin16/giturlparser.lua/compare/v1.0.7...v1.0.8) (2024-11-22)
 
 
