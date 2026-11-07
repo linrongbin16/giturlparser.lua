@@ -325,8 +325,6 @@ M._parse_host_with_omit_ssh = function(p, start)
   --- @type giturlparser._GitUrlPath
   local path_obj = {}
 
-  local plen = string.len(p)
-
   -- IPv6 host, e.g. [::1], [2001:db8::1]
   if M._find(p, "[", start) == start then
     local close_bracket_pos = M._find(p, "]", start + 1)
@@ -390,8 +388,6 @@ M._parse_user = function(p, start, ssh_protocol_omitted)
   --- @type giturlparser._GitUrlHost
   local host_obj = {}
 
-  local plen = string.len(p)
-
   local host_start_pos = start
 
   -- find first '@', the end position of user and password
@@ -426,6 +422,10 @@ M._parse_user = function(p, start, ssh_protocol_omitted)
 
     -- host start from '@', user (and password) end position
     host_start_pos = first_at_pos + 1
+  elseif type(first_at_pos) == "number" then
+    -- '@' at start position: empty user (and password) found
+    -- host start from '@', skip the leading '@'
+    host_start_pos = start + 1
   else
     -- user (and password) not found
     -- host start from beginning
