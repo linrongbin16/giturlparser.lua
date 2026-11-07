@@ -32,7 +32,7 @@ jobs:
       - uses: lunarmodules/luacheck@v1
         with:
           args: src  --config .luacheckrc
-      - uses: stevearc/nvim-typecheck-action@v1
+      - uses: stevearc/nvim-typecheck-action@v2
         with:
           path: src/giturlparser.lua
           level: Information
