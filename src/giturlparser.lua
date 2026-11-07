@@ -257,9 +257,14 @@ M._parse_host = function(p, start)
       -- host end with '/'
       host, host_pos = M._make(p, start, first_slash_pos - 1)
       path_obj = M._parse_path(p, first_slash_pos)
-    else
-      -- first slash not found, host is omitted, path end until url end
+    elseif type(first_slash_pos) == "number" then
+      -- first slash is at start, host is omitted (empty), path until url end
       path_obj = M._parse_path(p, start)
+    else
+      -- first slash not found, host end until url end (no path)
+      if start <= plen then
+        host, host_pos = M._make(p, start, plen)
+      end
     end
   end
 
