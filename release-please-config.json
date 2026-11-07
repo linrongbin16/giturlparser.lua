@@ -1,0 +1,9 @@
+{
+  "packages": {
+    ".": {
+      "release-type": "simple",
+      "package-name": "giturlparser.lua",
+      "include-component-in-tag": false
+    }
+  }
+}
