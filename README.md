@@ -9,36 +9,40 @@
 </p>
 
 <p align="center">
-Git url parsing library for lua, e.g. the output of <code>git remote get-url origin</code>.
+Git url parsing library for Lua, i.e. the output of <code>git remote get-url origin</code>.
 </p>
+
+Parse any git remote url into a flat Lua table of components — protocol, user, password, host, port, path, `org` and `repo` — along with the byte range of each component in the original string.
 
 ## Table of Contents
 
-- [Requirements](#requirements)
 - [Features](#features)
+- [Requirements](#requirements)
 - [Install](#install)
-- [Patterns](#patterns)
-  - [Full Protocols](#full-protocols)
-  - [SSH Omitted Protocols](#ssh-omitted-protocols)
-  - [Local File System](#local-file-system)
+- [Quick Start](#quick-start)
+- [Supported URL Formats](#supported-url-formats)
 - [API](#api)
   - [Types](#types)
     - [`giturlparser.GitUrlPos`](#giturlparsergiturlpos)
     - [`giturlparser.GitUrlInfo`](#giturlparsergiturlinfo)
   - [Functions](#functions)
     - [`parse`](#parse)
+- [Examples](#examples)
+- [Notes & Limitations](#notes--limitations)
 - [References](#references)
 - [Development](#development)
 - [Contribute](#contribute)
-
-## Requirements
-
-- Lua >= 5.1, luajit >= 2.0.0.
+- [License](#license)
 
 ## Features
 
-* Single file & zero dependency.
-* Full [Git Protocols](https://git-scm.com/book/en/v2/Git-on-the-Server-The-Protocols) support (see [Patterns](#patterns)).
+- **Zero dependency, single file.** Copy `src/giturlparser.lua` into your project, or install it from LuaRocks.
+- **Positions included.** Every component comes with a `{start_pos, end_pos}` pair, which is handy for highlighting or rewriting parts of a url in place.
+- **Covers what git actually emits.** Full protocols (`https://`, `ssh://`, `git://`, `file://`), scp-like `user@host:path`, and local paths (absolute, relative, `~`, Windows drive letters) are all handled.
+
+## Requirements
+
+- Lua >= 5.1, LuaJIT >= 2.0.0.
 
 ## Install
 
@@ -46,54 +50,73 @@ Git url parsing library for lua, e.g. the output of <code>git remote get-url ori
 luarocks install giturlparser
 ```
 
-## Patterns
+Or vendor the single source file:
 
-There are (mainly) three types of git url pattern:
+```bash
+cp src/giturlparser.lua /your/project/lua/giturlparser.lua
+```
 
-> [!NOTE]
->
-> They are (just help to explain) written with a regex-like syntax:
->
-> 1. The `{}` contains parsed components returned from [`giturlparser.GitUrlInfo`](#giturlparsergiturlinfo).
-> 2. The `[]` contains optional (0 or 1) component.
-> 3. The `[]*` contains 0 or more component.
-> 4. The `[]+` contains 1 or more component.
-> 5. The `|` inside `[]` is **_or_** operator.
+## Quick Start
+
+```lua
+local giturlparser = require("giturlparser")
+
+local info, err = giturlparser.parse("git@github.com:linrongbin16/giturlparser.lua.git")
+if not info then
+  error(err)
+end
+
+print(info.host) -- github.com
+print(info.org)  -- linrongbin16
+print(info.repo) -- giturlparser.lua.git
+
+-- Every component carries its byte range in the original url.
+print(info.repo_pos.start_pos, info.repo_pos.end_pos) -- 29  48
+```
+
+## Supported URL Formats
+
+There are (mainly) three families of git url. Below they are described with a regex-like syntax purely for readability:
+
+1. `{}` marks a component returned in [`giturlparser.GitUrlInfo`](#giturlparsergiturlinfo).
+2. `[]` is optional (0 or 1 occurrence), `[]*` is 0 or more, `[]+` is 1 or more.
+3. `|` inside `[]` is the **_or_** operator.
 
 ### Full Protocols
 
 `{protocol}://[[{user}[:{password}]@]{host}[:{port}]]/[{org}/]*{repo}`
 
-For example:
-
 - `http://host.xyz/repo.git`
 - `https://git@127.0.0.1:12345/repo.git`
-- `ssh://username:password@host.xyz:port/path/to/the/repo.git`
-- `ssh://host.xyz:port/path/to/the/repo.git`
+- `ssh://username:password@host.xyz:2222/path/to/the/repo.git`
+- `ssh://host.xyz:2222/path/to/the/repo.git`
+- `ssh://[::1]:2222/repo.git` (IPv6 host, without the enclosing brackets in `host`)
 - `file:///repo.git`
-- `file://user:passwd@host.xyz:port/path/to/the/repo.git`
+- `file://host.xyz/path/to/the/repo.git`
 - `file://~/home/to/the/repo.git`
 
-### SSH Omitted Protocols
+### SSH Omitted Protocols (scp-like)
 
 `[{user}[:{password}]@]{host}:[{org}/]*{repo}`
 
-For example:
-
 - `git@host.xyz:repo.git`
 - `user:passwd@host.xyz:path/to/the/repo.git`
+- `git@[::1]:repo.git`
+
+> [!NOTE]
+>
+> A url is treated as scp-like only when there is no `/` before the first `:`. So `./foo:bar` and `/abs/path:with:colons` stay local paths, while `foo:bar` is read as host `foo` + path `bar`.
 
 ### Local File System
 
-`[[.|..|~]/][{org}/]*{repo}`
-
-For example:
+`[.|..|~|/][{org}/]*{repo}` (no protocol, no host)
 
 - `repo.git`
 - `./repo.git`
 - `../path/to/the/repo.git`
 - `~/home/to/the/repo.git`
 - `/usr/home/to/the/repo.git`
+- `C:/path/to/repo.git` (Windows drive letter is read as `host`)
 
 ## API
 
@@ -107,10 +130,12 @@ The string position of a component.
 --- @alias giturlparser.GitUrlPos {start_pos:integer?,end_pos:integer?}
 ```
 
-It contains below fields:
+- `start_pos`: Start string index (1-based, inclusive).
+- `end_pos`: End string index (1-based, inclusive).
 
-- `start_pos`: Start string index.
-- `end_pos`: End string index.
+> [!NOTE]
+>
+> Indexes are Lua string indexes, so `url:sub(pos.start_pos, pos.end_pos)` returns exactly the component.
 
 #### `giturlparser.GitUrlInfo`
 
@@ -120,31 +145,31 @@ Parsed information.
 --- @alias giturlparser.GitUrlInfo {protocol:string?,protocol_pos:giturlparser.GitUrlPos?,user:string?,user_pos:giturlparser.GitUrlPos?,password:string?,password_pos:giturlparser.GitUrlPos?,host:string?,host_pos:giturlparser.GitUrlPos?,port:string?,port_pos:giturlparser.GitUrlPos?,org:string?,org_pos:giturlparser.GitUrlPos?,repo:string?,repo_pos:giturlparser.GitUrlPos?,path:string?,path_pos:giturlparser.GitUrlPos?}
 ```
 
-It contains below fields:
+| Field      | Description                                       | Example (`https://user:pass@host.xyz:8080/org/repo.git`) |
+| ---------- | ------------------------------------------------- | -------------------------------------------------------- |
+| `protocol` | Protocol before `://`                             | `https`                                                  |
+| `user`     | User name before `@`                              | `user`                                                   |
+| `password` | Password between `:` and `@`                      | `pass`                                                   |
+| `host`     | Host name (IPv6 without brackets)                 | `host.xyz`                                               |
+| `port`     | Port after `:`                                    | `8080`                                                   |
+| `path`     | Everything after host (and port)                  | `/org/repo.git`                                          |
+| `org`      | `path` without leading `/` and the last component | `org`                                                    |
+| `repo`     | Last component of `path`                          | `repo.git`                                               |
 
-- `protocol`/`protocol_pos`: Protocol, e.g. `http` in `http://github.com`, and its position.
-- `user`/`user_pos`: User name, e.g. `username` in `ssh://username@githost.com`, and its position.
-- `password`/`password_pos`: Password, e.g. `password` in `ssh://username:password@githost.com`, and its position.
-- `host`/`host_pos`: Host name, e.g. `githost.com` in `ssh://githost.com`, and its position.
-- `port`/`port_pos`: Port, e.g. `12345` in `ssh://127.0.0.1:12345/org/repo.git`, and its position.
-- `path`/`path_pos`: All the left parts after host name (and optional port), e.g. `/linrongbin16/giturlparser.lua.git` in `https://github.com/linrongbin16/giturlparser.lua.git`, and its position.
+Every field above has a matching `<field>_pos` field with its [`giturlparser.GitUrlPos`](#giturlparsergiturlpos), or `nil` when the component is absent.
 
-There're 2 more sugar fields:
+Notes on the sugar fields:
 
-- `repo`/`repo_pos`: Repository (the last part after the last slash `/`), e.g. `giturlparser.lua.git` in `https://github.com/linrongbin16/giturlparser.lua.git`, and its position.
-- `org`/`org_pos`: , Organization (the parts after host name (and optional port), before the last slash `/`), e.g. `linrongbin16` in `https://github.com/linrongbin16/giturlparser.lua.git`, and its position.
-
-> [!NOTE]
->
-> - The `{path}` component is (almost) equivalent to `/{org}/{repo}`.
-> - The `{org}` and `{repo}` component are trimmed from around slashes if there's any.
-> - If there's only 1 slash, the `org` component is omitted.
+- `path` is (almost) equivalent to `/{org}/{repo}`; it keeps its leading `/`.
+- `org` and `repo` are trimmed of surrounding slashes.
+- `org` may contain slashes: for `https://github.com/a/b/c.git` it is `a/b`, and `repo` is `c.git`.
+- `org` is `nil` when there is only one path component.
 
 ### Functions
 
 #### `parse`
 
-Parse `url` and returns the parsed info (lua table).
+Parse `url` and return the parsed info (a Lua table).
 
 ```lua
 --- @param url string
@@ -158,26 +183,106 @@ Parameters:
 
 Returns:
 
-- Returns `giturlparser.GitUrlInfo` and `nil` if success.
-- Returns `nil` and error message `string` if failed.
+- `giturlparser.GitUrlInfo, nil` on success.
+- `nil, error_message` on failure. Today the only failure is a non-string or empty input, which returns `nil, "empty string"`.
+
+> [!NOTE]
+>
+> An unparsable-looking url is not an error: `parse` always returns a table as long as the input is a non-empty string, filling in whatever components it could find and leaving the rest `nil`.
+
+## Examples
+
+| URL                                                    | `protocol` | `user` | `host`       | `port` | `org`          | `repo`                 |
+| ------------------------------------------------------ | ---------- | ------ | ------------ | ------ | -------------- | ---------------------- |
+| `https://github.com/linrongbin16/giturlparser.lua.git` | `https`    | —      | `github.com` | —      | `linrongbin16` | `giturlparser.lua.git` |
+| `ssh://git@127.0.0.1:2222/repo.git`                    | `ssh`      | `git`  | `127.0.0.1`  | `2222` | —              | `repo.git`             |
+| `git@github.com:linrongbin16/giturlparser.lua.git`     | —          | `git`  | `github.com` | —      | `linrongbin16` | `giturlparser.lua.git` |
+| `ssh://[::1]:2222/repo.git`                            | `ssh`      | —      | `::1`        | `2222` | —              | `repo.git`             |
+| `file:///path/to/repo.git`                             | `file`     | —      | —            | —      | `path/to`      | `repo.git`             |
+| `./repo.git`                                           | —          | —      | —            | —      | `.`            | `repo.git`             |
+| `@host:repo.git`                                       | —          | —      | `host`       | —      | —              | `repo.git`             |
+| `user:passwd@host.xyz:path/to/the/repo.git`            | —          | `user` | `host.xyz`   | —      | `path/to/the`  | `repo.git`             |
+
+Extracting the repository slug from whichever url git hands you:
+
+```lua
+local giturlparser = require("giturlparser")
+
+--- @param remote_url string
+--- @return string? slug e.g. "linrongbin16/giturlparser.lua"
+local function repo_slug(remote_url)
+  local info = giturlparser.parse(remote_url)
+  if not info or not info.repo then
+    return nil
+  end
+  if not info.org then
+    return info.repo
+  end
+  return info.org .. "/" .. info.repo
+end
+
+print(repo_slug("git@github.com:linrongbin16/giturlparser.lua.git")) -- linrongbin16/giturlparser.lua.git
+print(repo_slug("https://gitlab.com/group/sub/repo.git")) -- group/sub/repo.git
+print(repo_slug("https://github.com/rust-lang/rust.git")) -- rust-lang/rust.git
+```
+
+## Notes & Limitations
+
+- `host` for an IPv6 url (`ssh://[::1]:2222/repo.git`) is `::1`, i.e. without the `[` and `]`; `host_pos` points at `::1` inside the brackets.
+- `port` is returned as a string, not a number.
+- `file://~/home/to/the/repo.git` is treated like any other url: `~` ends up in `host` (`host = "~"`), not expanded.
+- An empty authority such as `ssh://:2222/repo.git` yields `host = nil` and `port = "2222"`.
+- `C:/path/to/repo.git` is ambiguous by nature; it is parsed as scp-like (host `C`), not as a Windows path.
+- Trailing slashes are trimmed from `org` and `repo`, but kept in `path`.
+- For a local path, `org` keeps its `.`/`..`/`~` segments verbatim: `./repo.git` gives `org = "."`, `~/a/repo.git` gives `org = "~/a"`. Strip them yourself if you need a host-independent slug.
 
 ## References
 
 1. [What are the supported git url formats?](https://stackoverflow.com/questions/31801271/what-are-the-supported-git-url-formats)
+2. [Git on the Server - The Protocols](https://git-scm.com/book/en/v2/Git-on-the-Server-The-Protocols)
+3. Used by [gitlinker.nvim](https://github.com/linrongbin16/gitlinker.nvim) to generate permalinks.
 
 ## Development
 
-To develop the project and make PR, please setup with:
+To develop the project and make a PR, please set up with:
 
 - [lua-language-server](https://github.com/LuaLS/lua-language-server).
 - [stylua](https://github.com/JohnnyMorganz/StyLua).
 - [luarocks](https://luarocks.org/).
 - [luacheck](https://github.com/mpeterv/luacheck).
-
-To run unit tests, please install below dependencies:
-
 - [busted](https://github.com/lunarmodules/busted).
+
+Run the unit tests:
+
+```bash
+luarocks install busted
+busted .
+```
+
+Format and lint (same as CI):
+
+```bash
+stylua --config-path .stylua.toml ./src ./spec
+luacheck src --config .luacheckrc
+```
+
+Run the tests against a specific interpreter:
+
+```bash
+lua5.1 --version && busted .
+luajit --version && busted .
+```
+
+Build the rock locally:
+
+```bash
+luarocks make giturlparser-scm-1.rockspec
+```
 
 ## Contribute
 
 Please open [issue](https://github.com/linrongbin16/giturlparser.lua/issues)/[PR](https://github.com/linrongbin16/giturlparser.lua/pulls) for anything about giturlparser.lua.
+
+## License
+
+[MIT](./LICENSE) © linrongbin16
