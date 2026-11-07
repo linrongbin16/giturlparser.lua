@@ -446,7 +446,17 @@ M.parse = function(url)
 
     -- find first ':', host end position on omitted ssh protocol
     local first_colon_pos = M._find(url, ":")
-    if type(first_colon_pos) == "number" and first_colon_pos > 1 then
+    -- scp-like syntax is only recognized if there is no slash before the
+    -- first colon; otherwise it is a local path that contains a colon
+    -- (e.g. './foo:bar', '/abs/path:with:colons').
+    local first_slash_pos = M._find(url, "/")
+    local is_scp_like = type(first_colon_pos) == "number"
+      and first_colon_pos > 1
+      and not (
+        type(first_slash_pos) == "number"
+        and first_slash_pos < first_colon_pos
+      )
+    if is_scp_like then
       local user_obj = M._parse_user(url, 1, true)
       local host_obj = user_obj.host_obj
       local path_obj = host_obj.path_obj
