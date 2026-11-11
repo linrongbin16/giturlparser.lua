@@ -116,15 +116,8 @@ There are (mainly) three families of git url. Below they are described with a re
 - `../path/to/the/repo.git`
 - `~/home/to/the/repo.git`
 - `/usr/home/to/the/repo.git`
+- `/tmp/repo.git`
 - `C:/path/to/repo.git` (Windows drive letter is read as `host`)
-
-A local path has no `protocol` and no `host`:
-
-```lua
-local info = giturlparser.parse("/tmp/repo.git")
-print(info.protocol) -- nil
-print(info.host)     -- nil
-```
 
 ## API
 
