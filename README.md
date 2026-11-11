@@ -118,6 +118,14 @@ There are (mainly) three families of git url. Below they are described with a re
 - `/usr/home/to/the/repo.git`
 - `C:/path/to/repo.git` (Windows drive letter is read as `host`)
 
+A local path has no `protocol` and no `host`:
+
+```lua
+local info = giturlparser.parse("/tmp/repo.git")
+print(info.protocol) -- nil
+print(info.host)     -- nil
+```
+
 ## API
 
 ### Types
@@ -199,6 +207,7 @@ Returns:
 | `git@github.com:linrongbin16/giturlparser.lua.git`     | —          | `git`  | `github.com` | —      | `linrongbin16` | `giturlparser.lua.git` |
 | `ssh://[::1]:2222/repo.git`                            | `ssh`      | —      | `::1`        | `2222` | —              | `repo.git`             |
 | `file:///path/to/repo.git`                             | `file`     | —      | —            | —      | `path/to`      | `repo.git`             |
+| `/tmp/repo.git`                                        | —          | —      | —            | —      | `tmp`          | `repo.git`             |
 | `./repo.git`                                           | —          | —      | —            | —      | `.`            | `repo.git`             |
 | `@host:repo.git`                                       | —          | —      | `host`       | —      | —              | `repo.git`             |
 | `user:passwd@host.xyz:path/to/the/repo.git`            | —          | `user` | `host.xyz`   | —      | `path/to/the`  | `repo.git`             |
@@ -231,7 +240,9 @@ print(repo_slug("https://github.com/rust-lang/rust.git")) -- rust-lang/rust.git
 - `host` for an IPv6 url (`ssh://[::1]:2222/repo.git`) is `::1`, i.e. without the `[` and `]`; `host_pos` points at `::1` inside the brackets.
 - `port` is returned as a string, not a number.
 - `file://~/home/to/the/repo.git` is treated like any other url: `~` ends up in `host` (`host = "~"`), not expanded.
-- An empty authority such as `ssh://:2222/repo.git` yields `host = nil` and `port = "2222"`.
+- An empty authority such as `ssh://:2222/repo.git` yields `host = nil` and `port = "2222"`, like a bare local path such as `/tmp/repo.git`. The parsed fields alone do not tell the two apart.
+- The host of a `file://` url is reported in `host` even though git ignores it: `file://host.xyz/tmp/repo.git` gives `host = "host.xyz"`. Use `path` if you need the pure path.
+- This library only parses: it does not check that a url or a local path exists, nor does it talk to git. A remote url that parses fine can still be unusable.
 - `C:/path/to/repo.git` is ambiguous by nature; it is parsed as scp-like (host `C`), not as a Windows path.
 - Trailing slashes are trimmed from `org` and `repo`, but kept in `path`.
 - For a local path, `org` keeps its `.`/`..`/`~` segments verbatim: `./repo.git` gives `org = "."`, `~/a/repo.git` gives `org = "~/a"`. Strip them yourself if you need a host-independent slug.
